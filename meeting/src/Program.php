@@ -15,6 +15,7 @@ final class Program
      */
     public function __construct(array $programSlots)
     {
+        Assert::notEmpty($programSlots, 'At least one ProgramSlot is required.');
         Assert::allIsInstanceOf($programSlots, ProgramSlot::class);
         $this->programSlots = $programSlots;
     }
