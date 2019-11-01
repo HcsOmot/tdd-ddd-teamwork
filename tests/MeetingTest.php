@@ -5,6 +5,7 @@ namespace Procurios\Meeting\test;
 
 use DateTime;
 use DateTimeImmutable;
+use DomainException;
 use InvalidArgumentException;
 use Procurios\Meeting\Meeting;
 use Procurios\Meeting\Program;
@@ -100,5 +101,35 @@ final class MeetingTest extends TestCase
 
         $this->assertGreaterThanOrEqual(5, strlen($meeting->getTitle()));
         $this->assertEquals($title, $meeting->getTitle());
+    }
+
+    public function testThatMeetingCannotHaveStartDateLaterThanEndDate()
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Meeting cannot start after it ends.');
+        new Meeting(
+            Uuid::uuid4(),
+            'Starting later than ending...',
+            '... should not be allowed.',
+            DateTimeImmutable::createFromMutable(
+                (new DateTime('now'))
+                    ->modify('+1 day')
+            ),
+            DateTimeImmutable::createFromMutable(new DateTime('now')),
+            new Program([
+                new ProgramSlot(
+                    new DateTimeImmutable('2017-12-15 19:00'),
+                    new DateTimeImmutable('2017-12-15 20:00'),
+                    'Divergence',
+                    'Main room'
+                ),
+                new ProgramSlot(
+                    new DateTimeImmutable('2017-12-15 20:00'),
+                    new DateTimeImmutable('2017-12-15 21:00'),
+                    'Convergence',
+                    'Main room'
+                ),
+            ])
+        );
     }
 }
