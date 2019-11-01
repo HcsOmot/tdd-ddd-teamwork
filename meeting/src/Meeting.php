@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateTimeImmutable;
+use InvalidArgumentException;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
@@ -38,10 +39,24 @@ final class Meeting
         Program $program
     ) {
         $this->meetingId = $meetingId;
-        $this->title = $title;
+        $this->validateTitle($title);
         $this->description = $description;
         $this->start = $start;
         $this->end = $end;
         $this->program = $program;
+    }
+
+    private function validateTitle(string $title)
+    {
+        if (strlen($title) < 5) {
+            throw new InvalidArgumentException('Meeting title must be at least 5 characters long');
+        }
+
+        $this->title = $title;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
     }
 }
