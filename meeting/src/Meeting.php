@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
-use DateTimeImmutable;
-use DomainException;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
@@ -15,10 +13,8 @@ final class Meeting
     private $title;
     /** @var Description */
     private $description;
-    /** @var DateTimeImmutable */
-    private $start;
-    /** @var DateTimeImmutable */
-    private $end;
+    /** @var MeetingDuration */
+    private $duration;
     /** @var Program */
     private $program;
 
@@ -26,32 +22,20 @@ final class Meeting
      * @param UuidInterface $meetingId
      * @param Title $title
      * @param Description $description
-     * @param DateTimeImmutable $start
-     * @param DateTimeImmutable $end
+     * @param MeetingDuration $duration
      * @param Program $program
      */
     public function __construct(
         UuidInterface $meetingId,
         Title $title,
         Description $description,
-        DateTimeImmutable $start,
-        DateTimeImmutable $end,
+        MeetingDuration $duration,
         Program $program
     ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
-        $this->validateDates($start, $end);
+        $this->duration = $duration;
         $this->program = $program;
-    }
-
-    private function validateDates(DateTimeImmutable $start, DateTimeImmutable $end)
-    {
-        if ($start > $end) {
-            throw new DomainException('Meeting cannot start after it ends.');
-        }
-
-        $this->start = $start;
-        $this->end = $end;
     }
 }
