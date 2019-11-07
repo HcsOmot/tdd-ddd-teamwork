@@ -5,16 +5,15 @@ namespace Procurios\Meeting;
 
 use DateTimeImmutable;
 use DomainException;
-use InvalidArgumentException;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
 {
     /** @var UuidInterface */
     private $meetingId;
-    /** @var string */
+    /** @var Title */
     private $title;
-    /** @var string */
+    /** @var Description */
     private $description;
     /** @var DateTimeImmutable */
     private $start;
@@ -25,39 +24,25 @@ final class Meeting
 
     /**
      * @param UuidInterface $meetingId
-     * @param string $title
-     * @param string $description
+     * @param Title $title
+     * @param Description $description
      * @param DateTimeImmutable $start
      * @param DateTimeImmutable $end
      * @param Program $program
      */
     public function __construct(
         UuidInterface $meetingId,
-        string $title,
-        string $description,
+        Title $title,
+        Description $description,
         DateTimeImmutable $start,
         DateTimeImmutable $end,
         Program $program
     ) {
         $this->meetingId = $meetingId;
-        $this->validateTitle($title);
+        $this->title = $title;
         $this->description = $description;
         $this->validateDates($start, $end);
         $this->program = $program;
-    }
-
-    private function validateTitle(string $title)
-    {
-        if (strlen($title) < 5) {
-            throw new InvalidArgumentException('Meeting title must be at least 5 characters long');
-        }
-
-        $this->title = $title;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
     }
 
     private function validateDates(DateTimeImmutable $start, DateTimeImmutable $end)
