@@ -7,7 +7,9 @@ use DateTimeImmutable;
 use Procurios\Meeting\Description;
 use Procurios\Meeting\Meeting;
 use Procurios\Meeting\MeetingDuration;
+use Procurios\Meeting\MeetingEnd;
 use Procurios\Meeting\MeetingId;
+use Procurios\Meeting\MeetingStart;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use PHPUnit\Framework\TestCase;
@@ -20,9 +22,9 @@ final class MeetingTest extends TestCase
     {
         $title = new Title('TDD, DDD & Teamwork');
         $description = new Description('This is a silly workshop, don\'t come');
-        $start = new DateTimeImmutable('2017-12-15 19:00');
-        $end = new DateTimeImmutable('2017-12-15 21:00');
-        $meetingDuration = new MeetingDuration($start, $end);
+        $meetingStart = new MeetingStart(new DateTimeImmutable('2017-12-15 19:00'));
+        $meetingEnd = new MeetingEnd(new DateTimeImmutable('2017-12-15 21:00'));
+        $meetingDuration = new MeetingDuration($meetingStart, $meetingEnd);
         $meetingId = new MeetingId(Uuid::uuid4());
 
         $this->assertInstanceOf(Meeting::class, new Meeting(
