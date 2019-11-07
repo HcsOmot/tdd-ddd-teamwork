@@ -36,4 +36,24 @@ final class Meeting
         $this->duration = $duration;
         $this->program = $program;
     }
+
+    public function getDuration(): MeetingDuration
+    {
+        return $this->duration;
+    }
+
+    public function reschedule(MeetingStart $newStart)
+    {
+        $oldStartDate = $this->duration->from()->getStartDate();
+        $oldEndDate = $this->duration->until()->getEndDate();
+        $meetupLasts = $oldStartDate->diff($oldEndDate);
+
+        $newEndDate = $oldEndDate->add($meetupLasts);
+
+        $newEnd = new MeetingEnd($newEndDate);
+
+        $newDuration = new MeetingDuration($newStart, $newEnd);
+
+        $this->duration = $newDuration;
+    }
 }
