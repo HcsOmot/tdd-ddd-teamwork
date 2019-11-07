@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
-use Ramsey\Uuid\UuidInterface;
-
 final class Meeting
 {
-    /** @var UuidInterface */
+    /** @var MeetingId */
     private $meetingId;
     /** @var Title */
     private $title;
@@ -19,14 +17,14 @@ final class Meeting
     private $program;
 
     /**
-     * @param UuidInterface $meetingId
+     * @param MeetingId $meetingId
      * @param Title $title
      * @param Description $description
      * @param MeetingDuration $duration
      * @param Program $program
      */
     public function __construct(
-        UuidInterface $meetingId,
+        MeetingId $meetingId,
         Title $title,
         Description $description,
         MeetingDuration $duration,
