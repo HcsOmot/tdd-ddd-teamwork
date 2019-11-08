@@ -30,7 +30,7 @@ class MeetingDurationTest extends \PHPUnit_Framework_TestCase
     public function testStartCannotBeAfterEnd()
     {
         $this->expectException(DomainException::class);
-        $this->expectExceptionMessage('Meeting cannot start after it ends.');
+        $this->expectExceptionMessage('Meeting cannot end before it starts.');
 
         $startDate = new DateTimeImmutable();
         $meetingStart = new MeetingStart($startDate);

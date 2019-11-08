@@ -13,6 +13,9 @@ use Procurios\Meeting\MeetingStart;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use PHPUnit\Framework\TestCase;
+use Procurios\Meeting\SlotDuration;
+use Procurios\Meeting\SlotEnd;
+use Procurios\Meeting\SlotStart;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
@@ -34,14 +37,18 @@ final class MeetingTest extends TestCase
             $meetingDuration,
             new Program([
                 new ProgramSlot(
-                    new DateTimeImmutable('2017-12-15 19:00'),
-                    new DateTimeImmutable('2017-12-15 20:00'),
+                    new SlotDuration(
+                        new SlotStart(new DateTimeImmutable('2017-12-15 19:00')),
+                        new SlotEnd(new DateTimeImmutable('2017-12-15 20:00'))
+                    ),
                     'Divergence',
                     'Main room'
                 ),
                 new ProgramSlot(
-                    new DateTimeImmutable('2017-12-15 20:00'),
-                    new DateTimeImmutable('2017-12-15 21:00'),
+                    new SlotDuration(
+                        new SlotStart(new DateTimeImmutable('2017-12-15 20:00')),
+                        new SlotEnd(new DateTimeImmutable('2017-12-15 21:00'))
+                    ),
                     'Convergence',
                     'Main room'
                 ),
@@ -67,14 +74,18 @@ final class MeetingTest extends TestCase
             $meetingDuration,
             new Program([
                 new ProgramSlot(
-                    new DateTimeImmutable('2017-12-15 19:00'),
-                    new DateTimeImmutable('2017-12-15 20:00'),
+                    new SlotDuration(
+                        new SlotStart(new DateTimeImmutable('2017-12-15 19:00')),
+                        new SlotEnd(new DateTimeImmutable('2017-12-15 20:00'))
+                    ),
                     'Divergence',
                     'Main room'
                 ),
                 new ProgramSlot(
-                    new DateTimeImmutable('2017-12-15 20:00'),
-                    new DateTimeImmutable('2017-12-15 21:00'),
+                    new SlotDuration(
+                        new SlotStart(new DateTimeImmutable('2017-12-15 20:00')),
+                        new SlotEnd(new DateTimeImmutable('2017-12-15 21:00'))
+                    ),
                     'Convergence',
                     'Main room'
                 ),

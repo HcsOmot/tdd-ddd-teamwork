@@ -39,7 +39,7 @@ class MeetingDuration
     private function validateDates(MeetingStart $start, MeetingEnd $end)
     {
         if ($start->getStartDate() > $end->getEndDate()) {
-            throw new DomainException('Meeting cannot start after it ends.');
+            throw new DomainException('Meeting cannot end before it starts.');
         }
 
         $this->start = $start;
