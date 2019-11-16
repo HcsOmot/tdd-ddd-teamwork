@@ -15,16 +15,16 @@ class ProgramSlotTest extends \PHPUnit_Framework_TestCase
 {
     public function testThatProgramSlotsCanBeComparedForOverlap()
     {
-        $startAt5 = new SlotStart(new DateTimeImmutable('2017-12-15 17:00'));
-        $endAt6 = new SlotEnd(new DateTimeImmutable('2017-12-15 18:00'));
+        $startAt5 = new DateTimeImmutable('2017-12-15 17:00');
+        $endAt6 = new DateTimeImmutable('2017-12-15 18:00');
         $duration5Till6 = new SlotDuration($startAt5, $endAt6);
 
-        $startAt6 = new SlotStart(new DateTimeImmutable('2017-12-15 18:00'));
-        $endAt7 = new SlotEnd(new DateTimeImmutable('2017-12-15 19:00'));
+        $startAt6 = new DateTimeImmutable('2017-12-15 18:00');
+        $endAt7 = new DateTimeImmutable('2017-12-15 19:00');
         $duration6Till7 = new SlotDuration($startAt6, $endAt7);
 
-        $startAt7 = new SlotStart(new DateTimeImmutable('2017-12-15 19:00'));
-        $endAt8 = new SlotEnd(new DateTimeImmutable('2017-12-15 20:00'));
+        $startAt7 = new DateTimeImmutable('2017-12-15 19:00');
+        $endAt8 = new DateTimeImmutable('2017-12-15 20:00');
         $duration7Till8 = new SlotDuration($startAt7, $endAt8);
 
         $roomA = 'room A';
@@ -58,4 +58,30 @@ class ProgramSlotTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($roomA5Till6TDD->overlapsWith($roomB7Till8Refactoring));
         $this->assertFalse($roomA5Till6TDD->overlapsWith($roomB5Till6Algorithms));
     }
+
+    public function testThatSlotCanBeRescheduled()
+    {
+        $slot = new ProgramSlot(
+            new SlotDuration(
+                new DateTimeImmutable('2017-12-15 19:00'),
+                new DateTimeImmutable('2017-12-15 20:00')
+            ),
+            'Slot A',
+            'room A'
+        );
+
+        $expected = new ProgramSlot(
+            new SlotDuration(
+                new DateTimeImmutable('2017-12-15 21:00'),
+                new DateTimeImmutable('2017-12-15 22:00')
+            ),
+            'Slot A',
+            'room A'
+        );
+
+        $rescheduled = $slot->rescheduledTo(new DateTimeImmutable('2017-12-15 21:00'));
+
+        $this->assertEquals($expected, $rescheduled);
+    }
+
 }

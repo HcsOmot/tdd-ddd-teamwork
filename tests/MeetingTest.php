@@ -7,15 +7,11 @@ use DateTimeImmutable;
 use Procurios\Meeting\Description;
 use Procurios\Meeting\Meeting;
 use Procurios\Meeting\MeetingDuration;
-use Procurios\Meeting\MeetingEnd;
 use Procurios\Meeting\MeetingId;
-use Procurios\Meeting\MeetingStart;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use PHPUnit\Framework\TestCase;
 use Procurios\Meeting\SlotDuration;
-use Procurios\Meeting\SlotEnd;
-use Procurios\Meeting\SlotStart;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
@@ -25,8 +21,8 @@ final class MeetingTest extends TestCase
     {
         $title = new Title('TDD, DDD & Teamwork');
         $description = new Description('This is a silly workshop, don\'t come');
-        $meetingStart = new MeetingStart(new DateTimeImmutable('2017-12-15 19:00'));
-        $meetingEnd = new MeetingEnd(new DateTimeImmutable('2017-12-15 21:00'));
+        $meetingStart = new DateTimeImmutable('2017-12-15 19:00');
+        $meetingEnd = new DateTimeImmutable('2017-12-15 21:00');
         $meetingDuration = new MeetingDuration($meetingStart, $meetingEnd);
         $meetingId = new MeetingId(Uuid::uuid4());
 
@@ -38,16 +34,16 @@ final class MeetingTest extends TestCase
             new Program([
                 new ProgramSlot(
                     new SlotDuration(
-                        new SlotStart(new DateTimeImmutable('2017-12-15 19:00')),
-                        new SlotEnd(new DateTimeImmutable('2017-12-15 20:00'))
+                        new DateTimeImmutable('2017-12-15 19:00'),
+                        new DateTimeImmutable('2017-12-15 20:00')
                     ),
                     'Divergence',
                     'Main room'
                 ),
                 new ProgramSlot(
                     new SlotDuration(
-                        new SlotStart(new DateTimeImmutable('2017-12-15 20:00')),
-                        new SlotEnd(new DateTimeImmutable('2017-12-15 21:00'))
+                        new DateTimeImmutable('2017-12-15 20:00'),
+                        new DateTimeImmutable('2017-12-15 21:00')
                     ),
                     'Convergence',
                     'Main room'
@@ -60,11 +56,12 @@ final class MeetingTest extends TestCase
     {
         $title = new Title('TDD, DDD & Teamwork');
         $description = new Description('This is a silly workshop, don\'t come');
-        $startDate = new DateTimeImmutable('2017-12-15 19:00');
-        $meetingStart = new MeetingStart($startDate);
-        $endDate = new DateTimeImmutable('2017-12-15 21:00');
-        $meetingEnd = new MeetingEnd($endDate);
-        $meetingDuration = new MeetingDuration($meetingStart, $meetingEnd);
+        $meetingStart = new DateTimeImmutable('2017-12-15 19:00');
+        $meetingEnd = new DateTimeImmutable('2017-12-15 21:00');
+        $meetingDuration = new MeetingDuration(
+            $meetingStart,
+            $meetingEnd
+        );
         $meetingId = new MeetingId(Uuid::uuid4());
 
         $meeting = new Meeting(
@@ -75,16 +72,74 @@ final class MeetingTest extends TestCase
             new Program([
                 new ProgramSlot(
                     new SlotDuration(
-                        new SlotStart(new DateTimeImmutable('2017-12-15 19:00')),
-                        new SlotEnd(new DateTimeImmutable('2017-12-15 20:00'))
+                        new DateTimeImmutable('2017-12-15 19:00'),
+                        new DateTimeImmutable('2017-12-15 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+            ])
+        );
+
+        $rescheduledMeetingDuration = new MeetingDuration(
+            new DateTimeImmutable('2017-12-15 21:00'),
+            new DateTimeImmutable('2017-12-15 23:00')
+        );
+
+        $expectation = new Meeting(
+            $meetingId,
+            $title,
+            $description,
+            $rescheduledMeetingDuration,
+            new Program([
+                new ProgramSlot(
+                    new SlotDuration(
+                        new DateTimeImmutable('2017-12-15 21:00'),
+                        new DateTimeImmutable('2017-12-15 22:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+            ])
+        );
+
+        $newMeetingStart = new DateTimeImmutable('2017-12-15 21:00');
+
+        $rescheduledMeeting = $meeting->reschedule($newMeetingStart);
+
+        $this->assertEquals($expectation, $rescheduledMeeting);
+    }
+
+    public function testThatMeetingWithTwoProgramSlotsCanBeRescheduled()
+    {
+        $title = new Title('TDD, DDD & Teamwork');
+        $description = new Description('This is a silly workshop, don\'t come');
+        $meetingStart = new DateTimeImmutable('2017-12-15 19:00');
+        $meetingEnd = new DateTimeImmutable('2017-12-15 21:00');
+        $meetingDuration = new MeetingDuration(
+            $meetingStart,
+            $meetingEnd
+        );
+        $meetingId = new MeetingId(Uuid::uuid4());
+
+        $meeting = new Meeting(
+            $meetingId,
+            $title,
+            $description,
+            $meetingDuration,
+            new Program([
+                new ProgramSlot(
+                    new SlotDuration(
+                        new DateTimeImmutable('2017-12-15 19:00'),
+                        new DateTimeImmutable('2017-12-15 20:00')
                     ),
                     'Divergence',
                     'Main room'
                 ),
                 new ProgramSlot(
                     new SlotDuration(
-                        new SlotStart(new DateTimeImmutable('2017-12-15 20:00')),
-                        new SlotEnd(new DateTimeImmutable('2017-12-15 21:00'))
+                        new DateTimeImmutable('2017-12-15 20:00'),
+                        new DateTimeImmutable('2017-12-15 21:00')
                     ),
                     'Convergence',
                     'Main room'
@@ -92,14 +147,40 @@ final class MeetingTest extends TestCase
             ])
         );
 
-        $newStartDate = $startDate->modify('+2 hours');
-        $newMeetingStart = new MeetingStart($newStartDate);
-        $expectedEnding = new MeetingEnd($endDate->modify('+2 hours'));
+        $rescheduledMeetingDuration = new MeetingDuration(
+            new DateTimeImmutable('2017-12-15 21:00'),
+            new DateTimeImmutable('2017-12-15 23:00')
+        );
 
-        $meeting->reschedule($newMeetingStart);
+        $expectation = new Meeting(
+            $meetingId,
+            $title,
+            $description,
+            $rescheduledMeetingDuration,
+            new Program([
+                new ProgramSlot(
+                    new SlotDuration(
+                        new DateTimeImmutable('2017-12-15 21:00'),
+                        new DateTimeImmutable('2017-12-15 22:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+                new ProgramSlot(
+                    new SlotDuration(
+                        new DateTimeImmutable('2017-12-15 22:00'),
+                        new DateTimeImmutable('2017-12-15 23:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+            ])
+        );
 
-        $meetingDuration = $meeting->getDuration();
+        $newMeetingStart = new DateTimeImmutable('2017-12-15 21:00');
 
-        $this->assertEquals($expectedEnding, $meetingDuration->until());
+        $rescheduledMeeting = $meeting->reschedule($newMeetingStart);
+
+        $this->assertEquals($expectation, $rescheduledMeeting);
     }
 }

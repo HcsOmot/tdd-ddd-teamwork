@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateInterval;
+
 final class ProgramSlot
 {
     /** @var SlotDuration */
@@ -27,5 +29,22 @@ final class ProgramSlot
     public function overlapsWith(ProgramSlot $other): bool
     {
         return $this->slotDuration->overlapsWith($other->slotDuration) && $this->room === $other->room;
+    }
+
+    public function rescheduledTo(\DateTimeImmutable $newProgramStart): ProgramSlot
+    {
+        $slotStartDiff = ($this->slotDuration->from())->diff($newProgramStart);
+
+        $newSlotStart = ($this->slotDuration->from())->add($slotStartDiff);
+
+        $rescheduledProgramSlotDuration = $this->slotDuration->rescheduledTo($newSlotStart);
+
+        return new self($rescheduledProgramSlotDuration, $this->title, $this->room);
+    }
+
+    public function rescheduledBy(DateInterval $diff): ProgramSlot
+    {
+        $rescheduledSlotDuration = $this->slotDuration->rescheduledBy($diff);
+        return new self($rescheduledSlotDuration, $this->title, $this->room);
     }
 }

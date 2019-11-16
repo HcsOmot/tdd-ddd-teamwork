@@ -6,21 +6,14 @@ namespace Procurios\Meeting\test;
 
 use DateTimeImmutable;
 use DomainException;
-use Procurios\Meeting\MeetingDuration;
-use Procurios\Meeting\MeetingEnd;
-use Procurios\Meeting\MeetingStart;
 use Procurios\Meeting\SlotDuration;
-use Procurios\Meeting\SlotEnd;
-use Procurios\Meeting\SlotStart;
 
 class SlotDurationTest extends \PHPUnit_Framework_TestCase
 {
     public function testThatTheDurationHasStartAndEnd()
     {
-        $startDate = new DateTimeImmutable();
-        $slotStart = new SlotStart($startDate);
-        $endDate = $startDate->modify('+1 hour');
-        $slotEnd = new SlotEnd($endDate);
+        $slotStart = new DateTimeImmutable();
+        $slotEnd = $slotStart->modify('+1 hour');
 
         $sut = new SlotDuration($slotStart, $slotEnd);
 
@@ -35,29 +28,40 @@ class SlotDurationTest extends \PHPUnit_Framework_TestCase
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Slot cannot end before it starts.');
 
-        $startDate = new DateTimeImmutable();
-        $slotStart = new SlotStart($startDate);
-        $endDate = $startDate->modify('-1 hour');
-        $slotEnd = new SlotEnd($endDate);
+        $slotStart = new DateTimeImmutable();
+        $slotEnd = $slotStart->modify('-1 hour');
 
         new SlotDuration($slotStart, $slotEnd);
     }
 
     public function testThatSlotDurationsCanBeCompared()
     {
-        $startDate1 = new DateTimeImmutable();
-        $slotAStart = new SlotStart($startDate1);
-        $endDate1 = $startDate1->modify('+1 hour');
-        $slotAEnd = new SlotEnd($endDate1);
+        $slotAStart = new DateTimeImmutable();
+        $slotAEnd = $slotAStart->modify('+1 hour');
 
-        $startDate2 = new DateTimeImmutable();
-        $slotBStart = new SlotStart($startDate2);
-        $endDate2 = $startDate2->modify('+1 hour');
-        $slotBEnd = new SlotEnd($endDate2);
+        $slotBStart = new DateTimeImmutable();
+        $slotBEnd = $slotBStart->modify('+1 hour');
 
         $slotADuration = new SlotDuration($slotAStart, $slotAEnd);
         $slotBDuration = new SlotDuration($slotBStart, $slotBEnd);
 
         $this->assertTrue($slotADuration->overlapsWith($slotBDuration));
+    }
+
+    public function testThatSlotDurationCanBeRescheduled()
+    {
+        $slotDuration = new SlotDuration(
+            new DateTimeImmutable('2017-12-15 19:00'),
+            new DateTimeImmutable('2017-12-15 20:00')
+        );
+
+        $expected = new SlotDuration(
+            new DateTimeImmutable('2017-12-15 21:00'),
+            new DateTimeImmutable('2017-12-15 22:00')
+        );
+
+        $rescheduled = $slotDuration->rescheduledTo(new DateTimeImmutable('2017-12-15 21:00'));
+
+        $this->assertEquals($expected, $rescheduled);
     }
 }

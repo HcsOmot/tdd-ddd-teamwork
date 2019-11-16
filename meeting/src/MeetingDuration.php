@@ -4,41 +4,42 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateTimeImmutable;
 use DomainException;
 
 class MeetingDuration
 {
     /**
-     * @var MeetingStart
+     * @var DateTimeImmutable
      */
     private $start;
     /**
-     * @var MeetingEnd
+     * @var DateTimeImmutable
      */
     private $end;
 
-    public function __construct(MeetingStart $start, MeetingEnd $end)
+    public function __construct(DateTimeImmutable $start, DateTimeImmutable $end)
     {
         $this->validateDates($start, $end);
     }
 
-    public function from(): MeetingStart
+    public function from(): DateTimeImmutable
     {
         return $this->start;
     }
 
-    public function until(): MeetingEnd
+    public function until(): DateTimeImmutable
     {
         return $this->end;
     }
 
     /**
-     * @param MeetingStart $start
-     * @param MeetingEnd $end
+     * @param DateTimeImmutable $start
+     * @param DateTimeImmutable $end
      */
-    private function validateDates(MeetingStart $start, MeetingEnd $end)
+    private function validateDates(DateTimeImmutable $start, DateTimeImmutable $end)
     {
-        if ($start->getStartDate() > $end->getEndDate()) {
+        if ($start > $end) {
             throw new DomainException('Meeting cannot end before it starts.');
         }
 
@@ -46,4 +47,12 @@ class MeetingDuration
         $this->end = $end;
     }
 
+    public function rescheduledTo(DateTimeImmutable $newMeetingStart): MeetingDuration
+    {
+        $meetingLasts = $this->start->diff($this->end);
+
+        $newEnd = $this->end->add($meetingLasts);
+
+        return new self($newMeetingStart, $newEnd);
+    }
 }

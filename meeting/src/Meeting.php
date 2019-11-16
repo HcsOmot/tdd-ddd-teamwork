@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateTimeImmutable;
+
 final class Meeting
 {
     /** @var MeetingId */
@@ -37,23 +39,17 @@ final class Meeting
         $this->program = $program;
     }
 
-    public function getDuration(): MeetingDuration
+    public function reschedule(DateTimeImmutable $newMeetingStart): Meeting
     {
-        return $this->duration;
-    }
-
-    public function reschedule(MeetingStart $newStart)
-    {
-        $oldStartDate = $this->duration->from()->getStartDate();
-        $oldEndDate = $this->duration->until()->getEndDate();
-        $meetupLasts = $oldStartDate->diff($oldEndDate);
-
-        $newEndDate = $oldEndDate->add($meetupLasts);
-
-        $newEnd = new MeetingEnd($newEndDate);
-
-        $newDuration = new MeetingDuration($newStart, $newEnd);
-
-        $this->duration = $newDuration;
+        $duration = $this->duration->rescheduledTo($newMeetingStart);
+        $programStartDiff = $this->duration->from()->diff($newMeetingStart);
+        $program = $this->program->rescheduledBy($programStartDiff);
+        return new self(
+            $this->meetingId,
+            $this->title,
+            $this->description,
+            $duration,
+            $program
+        );
     }
 }

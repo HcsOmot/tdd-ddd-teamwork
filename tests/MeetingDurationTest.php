@@ -7,17 +7,13 @@ namespace Procurios\Meeting\test;
 use DateTimeImmutable;
 use DomainException;
 use Procurios\Meeting\MeetingDuration;
-use Procurios\Meeting\MeetingEnd;
-use Procurios\Meeting\MeetingStart;
 
 class MeetingDurationTest extends \PHPUnit_Framework_TestCase
 {
     public function testThatTheDurationHasStartAndEnd()
     {
-        $startDate = new DateTimeImmutable();
-        $meetingStart = new MeetingStart($startDate);
-        $endDate = $startDate->modify('+1 hour');
-        $meetingEnd = new MeetingEnd($endDate);
+        $meetingStart = new DateTimeImmutable();
+        $meetingEnd = $meetingStart->modify('+1 hour');
 
         $sut = new MeetingDuration($meetingStart, $meetingEnd);
 
@@ -32,10 +28,8 @@ class MeetingDurationTest extends \PHPUnit_Framework_TestCase
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Meeting cannot end before it starts.');
 
-        $startDate = new DateTimeImmutable();
-        $meetingStart = new MeetingStart($startDate);
-        $endDate = $startDate->modify('-1 hour');
-        $meetingEnd = new MeetingEnd($endDate);
+        $meetingStart = new DateTimeImmutable();
+        $meetingEnd = $meetingStart->modify('-1 hour');
 
         new MeetingDuration($meetingStart, $meetingEnd);
     }
