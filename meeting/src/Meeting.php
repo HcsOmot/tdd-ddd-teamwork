@@ -3,45 +3,39 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
-use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
 {
     /** @var UuidInterface */
     private $meetingId;
-    /** @var string */
+    /** @var Title */
     private $title;
     /** @var string */
     private $description;
-    /** @var DateTimeImmutable */
-    private $start;
-    /** @var DateTimeImmutable */
-    private $end;
+    /** @var MeetingDuration */
+    private $meetingDuration;
     /** @var Program */
     private $program;
 
     /**
      * @param UuidInterface $meetingId
-     * @param string $title
+     * @param Title $title
      * @param string $description
-     * @param DateTimeImmutable $start
-     * @param DateTimeImmutable $end
+     * @param MeetingDuration $meetingDuration
      * @param Program $program
      */
     public function __construct(
         UuidInterface $meetingId,
-        string $title,
+        Title $title,
         string $description,
-        DateTimeImmutable $start,
-        DateTimeImmutable $end,
+        MeetingDuration $meetingDuration,
         Program $program
     ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
-        $this->start = $start;
-        $this->end = $end;
+        $this->meetingDuration = $meetingDuration;
         $this->program = $program;
     }
 }
