@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateInterval;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
@@ -37,5 +38,20 @@ final class Meeting
         $this->description = $description;
         $this->meetingDuration = $meetingDuration;
         $this->program = $program;
+    }
+
+    public function rescheduleBy(DateInterval $dateInterval): Meeting
+    {
+        $rescheduledDuration = $this->meetingDuration->rescheduleBy($dateInterval);
+
+        $rescheduledPrograms = $this->program->rescheduleBy($dateInterval);
+
+        return new self(
+          $this->meetingId,
+          $this->title,
+          $this->description,
+          $rescheduledDuration,
+          $rescheduledPrograms
+        );
     }
 }
