@@ -9,13 +9,13 @@ use DateTimeImmutable;
 final class ProgramSlot
 {
     /** @var DateTimeImmutable */
-    private $start;
+    public $start;
     /** @var DateTimeImmutable */
-    private $end;
+    public $end;
     /** @var string */
-    private $title;
+    public $title;
     /** @var string */
-    private $room;
+    public $room;
 
     /**
      * @param DateTimeImmutable $start

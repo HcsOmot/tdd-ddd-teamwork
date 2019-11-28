@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateInterval;
+use DomainException;
 use Webmozart\Assert\Assert;
 
 final class Program
@@ -18,6 +19,7 @@ final class Program
     {
         Assert::allIsInstanceOf($programSlots, ProgramSlot::class);
         Assert::minCount($programSlots, 1, 'Program must have at least one program slot.');
+        $this->preventProgramSlotOverlap($programSlots);
         $this->programSlots = $programSlots;
     }
 
@@ -31,5 +33,35 @@ final class Program
         }
 
         return new self($rescheduledPrograms);
+    }
+
+    private function preventProgramSlotOverlap(array $programSlots)
+    {
+        if (count($programSlots) === 1) {
+            return;
+        }
+
+        /** @var ProgramSlot $comparingSlot*/
+        foreach ($programSlots as $comparingSlot) {
+            foreach ($programSlots as $comparedSlot) {
+                if ($comparingSlot === $comparedSlot) {
+                    continue;
+                }
+
+                if ($comparingSlot->room !== $comparedSlot->room){
+                    continue;
+                }
+
+                if ($comparedSlot->start >= $comparingSlot->end) {
+                    continue;
+                }
+
+                if ($comparedSlot->end <= $comparingSlot->start) {
+                    continue;
+                }
+
+                throw new DomainException('Slots overlap');
+            }
+        }
     }
 }

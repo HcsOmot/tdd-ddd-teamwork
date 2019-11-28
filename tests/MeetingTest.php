@@ -174,19 +174,19 @@ final class MeetingTest extends TestCase
             'Meeting description',
             new MeetingDuration(
                 new DateTimeImmutable('2019-01-15 19:00'),
-                new DateTimeImmutable('2019-02-15 21:00')
+                new DateTimeImmutable('2019-01-15 21:00')
             ),
             new Program(
                 [
                     new ProgramSlot(
                         new DateTimeImmutable('2019-01-15 19:00'),
-                        new DateTimeImmutable('2019-02-15 21:00'),
+                        new DateTimeImmutable('2019-01-15 21:00'),
                         'Divergence',
                         'Main room'
                     ),
                     new ProgramSlot(
                         new DateTimeImmutable('2019-01-15 21:00'),
-                        new DateTimeImmutable('2019-02-15 22:00'),
+                        new DateTimeImmutable('2019-01-15 22:00'),
                         'Convergence',
                         'Main room'
                     ),
@@ -200,19 +200,19 @@ final class MeetingTest extends TestCase
             'Meeting description',
             new MeetingDuration(
                 new DateTimeImmutable('2019-01-16 19:00'),
-                new DateTimeImmutable('2019-02-16 21:00')
+                new DateTimeImmutable('2019-01-16 21:00')
             ),
             new Program(
                 [
                     new ProgramSlot(
                         new DateTimeImmutable('2019-01-16 19:00'),
-                        new DateTimeImmutable('2019-02-16 21:00'),
+                        new DateTimeImmutable('2019-01-16 21:00'),
                         'Divergence',
                         'Main room'
                     ),
                     new ProgramSlot(
                         new DateTimeImmutable('2019-01-16 21:00'),
-                        new DateTimeImmutable('2019-02-16 22:00'),
+                        new DateTimeImmutable('2019-01-16 22:00'),
                         'Convergence',
                         'Main room'
                     ),
@@ -223,5 +223,36 @@ final class MeetingTest extends TestCase
         $actual = $actual->rescheduleBy(new DateInterval('P1D'));
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testThatProgramSlotsAreNotOverlapping()
+    {
+        $this->expectException(DomainException::class);
+
+        new Meeting(
+            Uuid::uuid4(),
+            new Title('meeting title'),
+            'Meeting description',
+            new MeetingDuration(
+                new DateTimeImmutable('2019-01-15 19:00'),
+                new DateTimeImmutable('2019-02-15 21:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new DateTimeImmutable('2019-01-15 19:00'),
+                        new DateTimeImmutable('2019-02-15 21:00'),
+                        'Divergence',
+                        'Main room'
+                    ),
+                    new ProgramSlot(
+                        new DateTimeImmutable('2019-01-15 19:00'),
+                        new DateTimeImmutable('2019-02-15 21:00'),
+                        'Convergence',
+                        'Main room'
+                    ),
+                ]
+            )
+        );
     }
 }
