@@ -4,39 +4,35 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateInterval;
-use DateTimeImmutable;
 
 final class ProgramSlot
 {
-    /** @var DateTimeImmutable */
-    public $start;
-    /** @var DateTimeImmutable */
-    public $end;
+    /** @var ProgramSlotDuration */
+    private $duration;
     /** @var string */
     public $title;
     /** @var string */
     public $room;
 
     /**
-     * @param DateTimeImmutable $start
-     * @param DateTimeImmutable $end
      * @param string $title
      * @param string $room
      */
-    public function __construct(DateTimeImmutable $start, DateTimeImmutable $end, string $title, string $room)
+    public function __construct(ProgramSlotDuration $duration, string $title, string $room)
     {
-        $this->start = $start;
-        $this->end = $end;
+        $this->duration = $duration;
         $this->title = $title;
         $this->room = $room;
     }
 
     public function rescheduledBy(DateInterval $dateInterval): ProgramSlot
     {
-        $start = $this->start->add($dateInterval);
-        $end = $this->end->add($dateInterval);
+        $start = $this->duration->start->add($dateInterval);
+        $end = $this->duration->end->add($dateInterval);
 
-        return new self($start, $end, $this->title, $this->room);
+        $duration = new ProgramSlotDuration($start, $end);
+        
+        return new self($duration, $this->title, $this->room);
     }
 
     public function overlaps(ProgramSlot $other): bool
@@ -45,11 +41,11 @@ final class ProgramSlot
             return false;
         }
 
-        if ($this->start >= $other->end) {
+        if ($this->duration->start >= $other->duration->end) {
             return false;
         }
 
-        if ($this->end <= $other->start) {
+        if ($this->duration->end <= $other->duration->start) {
             return false;
         }
 
