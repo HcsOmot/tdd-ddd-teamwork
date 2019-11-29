@@ -44,7 +44,8 @@ final class ProgramSlot
         if ($this->room !== $other->room){
             return false;
         }
-
+        
+        // pass the call for overlap to the duration itself
         if ($this->duration->start >= $other->duration->end) {
             return false;
         }

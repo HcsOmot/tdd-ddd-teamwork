@@ -86,6 +86,7 @@ final class Meeting
             $this->program,
             $this->attendeeLimit
         );
+//        @TODO: entities are mutable, VO are not - no need to return new instance here
         $meeting->registeredAttendees = $this->registeredAttendees;
         
         return $meeting;

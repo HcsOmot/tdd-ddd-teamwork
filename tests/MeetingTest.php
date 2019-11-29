@@ -17,6 +17,7 @@ use Procurios\Meeting\Email;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
+// TODO: keep the tests on the higher level rather then on the lower level 
 final class MeetingTest extends TestCase
 {
     public function testThatValidMeetingsCanBeInstantiated()
@@ -314,6 +315,7 @@ final class MeetingTest extends TestCase
         );
     }
 
+//    extract everything that has to do with slot overlapping
     public function testThatProgramSlotsAreNotOverlapping()
     {
         new Meeting(
@@ -347,6 +349,8 @@ final class MeetingTest extends TestCase
         );
     }
 
+//    TODO - this isn't focused on rules and behaviour (where the complexity is)
+// this is already covered
     public function testThatMeetingCanBeCreatedWithLimitedNumberOfAttendees()
     {
         new Meeting(
@@ -416,6 +420,8 @@ final class MeetingTest extends TestCase
         
         $actual = $actual->registerAttendee(new Email('address@domain.tld'));
         
+        //        TODO: we don't need this because the test below check that the same user can't register twice
+        //         - it's better not to test based on state, but rather on the rules & behaviour
         $this->assertContains(
             new Email('address@domain.tld'), 
             $actual->getAttendees(), 
@@ -497,6 +503,7 @@ final class MeetingTest extends TestCase
                     ),
                 ]
             ),
+//            TODO: 5 is random and probably to high, 0 or 1 would have been just fine 
             5
         );
 

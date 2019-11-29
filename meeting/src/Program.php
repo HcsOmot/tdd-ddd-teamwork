@@ -37,10 +37,6 @@ final class Program
 
     private function preventProgramSlotOverlap(array $programSlots)
     {
-        if (count($programSlots) === 1) {
-            return;
-        }
-
         /** @var ProgramSlot $comparingSlot*/
         foreach ($programSlots as $comparingSlot) {
             /** @var ProgramSlot $comparedSlot*/
