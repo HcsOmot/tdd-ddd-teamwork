@@ -13,6 +13,7 @@ use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use PHPUnit\Framework\TestCase;
 use Procurios\Meeting\ProgramSlotDuration;
+use Procurios\Meeting\Email;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
@@ -344,5 +345,166 @@ final class MeetingTest extends TestCase
                 ]
             )
         );
+    }
+
+    public function testThatMeetingCanBeCreatedWithLimitedNumberOfAttendees()
+    {
+        new Meeting(
+            Uuid::uuid4(),
+            new Title('meeting title'),
+            'Meeting description',
+            new MeetingDuration(
+                new DateTimeImmutable('2019-01-15 19:00'),
+                new DateTimeImmutable('2019-02-15 21:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-01-15 19:00'),
+                            new DateTimeImmutable('2019-02-15 21:00')
+                        ),
+                        'Divergence',
+                        'Main room'
+                    ),
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-02-15 21:00'),
+                            new DateTimeImmutable('2019-02-15 22:00')
+                        ),
+                        'Convergence',
+                        'Main room'
+                    ),
+                ]
+            ),
+            10
+        );
+    }
+
+    public function testThatAttendeesCanRegisterForMeeting()
+    {
+        $actual = new Meeting(
+            Uuid::uuid4(),
+            new Title('meeting title'),
+            'Meeting description',
+            new MeetingDuration(
+                new DateTimeImmutable('2019-01-15 19:00'),
+                new DateTimeImmutable('2019-02-15 21:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-01-15 19:00'),
+                            new DateTimeImmutable('2019-02-15 21:00')
+                        ),
+                        'Divergence',
+                        'Main room'
+                    ),
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-02-15 21:00'),
+                            new DateTimeImmutable('2019-02-15 22:00')
+                        ),
+                        'Convergence',
+                        'Main room'
+                    ),
+                ]
+            ),
+            null
+        );
+        
+        $actual = $actual->registerAttendee(new Email('address@domain.tld'));
+        
+        $this->assertContains(
+            new Email('address@domain.tld'), 
+            $actual->getAttendees(), 
+            'Cannot find attendee email address',
+            true, false
+        );
+    }
+
+    public function testThatSameAttendeeCannotRegisterMoreThanOnce()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('This attendee already registered for this meeting.');
+        
+        $actual = new Meeting(
+            Uuid::uuid4(),
+            new Title('meeting title'),
+            'Meeting description',
+            new MeetingDuration(
+                new DateTimeImmutable('2019-01-15 19:00'),
+                new DateTimeImmutable('2019-02-15 21:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-01-15 19:00'),
+                            new DateTimeImmutable('2019-02-15 21:00')
+                        ),
+                        'Divergence',
+                        'Main room'
+                    ),
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-02-15 21:00'),
+                            new DateTimeImmutable('2019-02-15 22:00')
+                        ),
+                        'Convergence',
+                        'Main room'
+                    ),
+                ]
+            ),
+            null
+        );
+
+        $actual = $actual->registerAttendee(new Email('address@domain.tld'));
+        $actual->registerAttendee(new Email('address@domain.tld'));
+    }
+
+    public function testThatAttendeesCannotOverRegister()
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Registrations for this meeting are closed.');
+
+        $actual = new Meeting(
+            Uuid::uuid4(),
+            new Title('meeting title'),
+            'Meeting description',
+            new MeetingDuration(
+                new DateTimeImmutable('2019-01-15 19:00'),
+                new DateTimeImmutable('2019-02-15 21:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-01-15 19:00'),
+                            new DateTimeImmutable('2019-02-15 21:00')
+                        ),
+                        'Divergence',
+                        'Main room'
+                    ),
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2019-02-15 21:00'),
+                            new DateTimeImmutable('2019-02-15 22:00')
+                        ),
+                        'Convergence',
+                        'Main room'
+                    ),
+                ]
+            ),
+            5
+        );
+
+        $actual = $actual->registerAttendee(new Email('address1@domain.tld'));
+        $actual = $actual->registerAttendee(new Email('address2@domain.tld'));
+        $actual = $actual->registerAttendee(new Email('address3@domain.tld'));
+        $actual = $actual->registerAttendee(new Email('address4@domain.tld'));
+        $actual = $actual->registerAttendee(new Email('address5@domain.tld'));
+        $actual->registerAttendee(new Email('address5@domain.tld'));
     }
 }

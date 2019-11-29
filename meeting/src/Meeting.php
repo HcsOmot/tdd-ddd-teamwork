@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateInterval;
+use DomainException;
 use Ramsey\Uuid\UuidInterface;
+use Webmozart\Assert\Assert;
 
 final class Meeting
 {
@@ -18,6 +20,10 @@ final class Meeting
     private $meetingDuration;
     /** @var Program */
     private $program;
+    /** @var null|int */
+    private $attendeeLimit;
+    /** @var array */
+    private $registeredAttendees;
 
     /**
      * @param UuidInterface $meetingId
@@ -31,13 +37,16 @@ final class Meeting
         Title $title,
         string $description,
         MeetingDuration $meetingDuration,
-        Program $program
+        Program $program,
+        int $attendeeLimit = null
     ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
         $this->meetingDuration = $meetingDuration;
         $this->program = $program;
+        $this->attendeeLimit = $attendeeLimit;
+        $this->registeredAttendees = [];
     }
 
     public function rescheduleBy(DateInterval $dateInterval): Meeting
@@ -51,7 +60,39 @@ final class Meeting
           $this->title,
           $this->description,
           $rescheduledDuration,
-          $rescheduledPrograms
+          $rescheduledPrograms,
+          $this->attendeeLimit
         );
+    }
+
+    public function registerAttendee(Email $email): self
+    {
+        if ($this->attendeeLimit === 0) {
+            throw new DomainException('Registrations for this meeting are closed.');
+        }
+        
+        Assert::false(
+            in_array($email, $this->registeredAttendees),
+            'This attendee already registered for this meeting.'
+        );
+        $this->registeredAttendees[] = $email;
+        $this->attendeeLimit--;
+        
+        $meeting = new self(
+            $this->meetingId,
+            $this->title,
+            $this->description,
+            $this->meetingDuration,
+            $this->program,
+            $this->attendeeLimit
+        );
+        $meeting->registeredAttendees = $this->registeredAttendees;
+        
+        return $meeting;
+    }
+
+    public function getAttendees(): array
+    {
+        return $this->registeredAttendees;
     }
 }
