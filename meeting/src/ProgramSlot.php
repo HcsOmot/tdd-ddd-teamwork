@@ -37,6 +37,10 @@ final class ProgramSlot
 
     public function overlaps(ProgramSlot $other): bool
     {
+        if ($this === $other) {
+            return false;
+        }
+        
         if ($this->room !== $other->room){
             return false;
         }
