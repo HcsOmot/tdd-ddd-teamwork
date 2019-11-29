@@ -38,4 +38,21 @@ final class ProgramSlot
 
         return new self($start, $end, $this->title, $this->room);
     }
+
+    public function overlaps(ProgramSlot $other): bool
+    {
+        if ($this->room !== $other->room){
+            return false;
+        }
+
+        if ($this->start >= $other->end) {
+            return false;
+        }
+
+        if ($this->end <= $other->start) {
+            return false;
+        }
+
+        return true;
+    }
 }

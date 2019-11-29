@@ -43,24 +43,15 @@ final class Program
 
         /** @var ProgramSlot $comparingSlot*/
         foreach ($programSlots as $comparingSlot) {
+            /** @var ProgramSlot $comparedSlot*/
             foreach ($programSlots as $comparedSlot) {
                 if ($comparingSlot === $comparedSlot) {
                     continue;
                 }
 
-                if ($comparingSlot->room !== $comparedSlot->room){
-                    continue;
+                if ($comparingSlot->overlaps($comparedSlot)) {
+                    throw new DomainException('Slots overlap');
                 }
-
-                if ($comparedSlot->start >= $comparingSlot->end) {
-                    continue;
-                }
-
-                if ($comparedSlot->end <= $comparingSlot->start) {
-                    continue;
-                }
-
-                throw new DomainException('Slots overlap');
             }
         }
     }
