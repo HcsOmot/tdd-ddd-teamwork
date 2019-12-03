@@ -17,7 +17,6 @@ use Procurios\Meeting\Email;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
-// TODO: keep the tests on the higher level rather then on the lower level 
 final class MeetingTest extends TestCase
 {
     public function testThatValidMeetingsCanBeInstantiated()
@@ -50,35 +49,7 @@ final class MeetingTest extends TestCase
             ])
         ));
     }
-
-    public function testThatMeetingCannotHaveAnEmptyTitle()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Title must have at least five characters.');
-
-        new Meeting(
-            Uuid::uuid4(),
-            new Title(''),
-            'Meeting description',
-            new MeetingDuration(
-                new DateTimeImmutable('2019-12-15 21:00'),
-                new DateTimeImmutable('2019-01-15 19:00')
-            ),
-            new Program(
-                [
-                    new ProgramSlot(
-                        new ProgramSlotDuration(
-                            new DateTimeImmutable('2019-12-15 19:00'),
-                            new DateTimeImmutable('2019-12-15 20:00')
-                        ),
-                        'Divergence',
-                        'Main room'
-                    ),
-                ]
-            )
-        );
-    }
-
+    
     public function testThatMeetingCannotEndBeforeItStarts()
     {
         $this->expectException(DomainException::class);
@@ -349,42 +320,6 @@ final class MeetingTest extends TestCase
         );
     }
 
-//    TODO - this isn't focused on rules and behaviour (where the complexity is)
-// this is already covered
-    public function testThatMeetingCanBeCreatedWithLimitedNumberOfAttendees()
-    {
-        new Meeting(
-            Uuid::uuid4(),
-            new Title('meeting title'),
-            'Meeting description',
-            new MeetingDuration(
-                new DateTimeImmutable('2019-01-15 19:00'),
-                new DateTimeImmutable('2019-02-15 21:00')
-            ),
-            new Program(
-                [
-                    new ProgramSlot(
-                        new ProgramSlotDuration(
-                            new DateTimeImmutable('2019-01-15 19:00'),
-                            new DateTimeImmutable('2019-02-15 21:00')
-                        ),
-                        'Divergence',
-                        'Main room'
-                    ),
-                    new ProgramSlot(
-                        new ProgramSlotDuration(
-                            new DateTimeImmutable('2019-02-15 21:00'),
-                            new DateTimeImmutable('2019-02-15 22:00')
-                        ),
-                        'Convergence',
-                        'Main room'
-                    ),
-                ]
-            ),
-            10
-        );
-    }
-
     public function testThatAttendeesCanRegisterForMeeting()
     {
         $actual = new Meeting(
@@ -418,16 +353,7 @@ final class MeetingTest extends TestCase
             null
         );
         
-        $actual = $actual->registerAttendee(new Email('address@domain.tld'));
-        
-        //        TODO: we don't need this because the test below check that the same user can't register twice
-        //         - it's better not to test based on state, but rather on the rules & behaviour
-        $this->assertContains(
-            new Email('address@domain.tld'), 
-            $actual->getAttendees(), 
-            'Cannot find attendee email address',
-            true, false
-        );
+        $actual->registerAttendee(new Email('address@domain.tld'));
     }
 
     public function testThatSameAttendeeCannotRegisterMoreThanOnce()
@@ -503,15 +429,10 @@ final class MeetingTest extends TestCase
                     ),
                 ]
             ),
-//            TODO: 5 is random and probably to high, 0 or 1 would have been just fine 
-            5
+            1
         );
 
         $actual = $actual->registerAttendee(new Email('address1@domain.tld'));
         $actual = $actual->registerAttendee(new Email('address2@domain.tld'));
-        $actual = $actual->registerAttendee(new Email('address3@domain.tld'));
-        $actual = $actual->registerAttendee(new Email('address4@domain.tld'));
-        $actual = $actual->registerAttendee(new Email('address5@domain.tld'));
-        $actual->registerAttendee(new Email('address5@domain.tld'));
     }
 }

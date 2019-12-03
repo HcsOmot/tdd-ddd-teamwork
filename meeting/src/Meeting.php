@@ -78,18 +78,7 @@ final class Meeting
         $this->registeredAttendees[] = $email;
         $this->attendeeLimit--;
         
-        $meeting = new self(
-            $this->meetingId,
-            $this->title,
-            $this->description,
-            $this->meetingDuration,
-            $this->program,
-            $this->attendeeLimit
-        );
-//        @TODO: entities are mutable, VO are not - no need to return new instance here
-        $meeting->registeredAttendees = $this->registeredAttendees;
-        
-        return $meeting;
+        return $this;
     }
 
     public function getAttendees(): array
