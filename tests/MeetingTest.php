@@ -98,4 +98,49 @@ final class MeetingTest extends TestCase
             new Program([])
         );
     }
+
+    public function testThatMeetingCanBeRescheduled()
+    {
+        $meetingId = Uuid::uuid4();
+
+        $actual = new Meeting(
+            $meetingId,
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 19:00'),
+                new DateTimeImmutable('2020-01-01 21:00')
+            ),
+            new Program([
+                new ProgramSlot(
+                    new DateTimeImmutable('2020-01-01 19:00'),
+                    new DateTimeImmutable('2020-01-01 20:00'),
+                    'Divergence',
+                    'Main room'
+                )
+            ])
+        );
+
+        $expected = new Meeting(
+            $meetingId,
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-02 12:00'),
+                new DateTimeImmutable('2020-01-02 14:00')
+            ),
+            new Program([
+                new ProgramSlot(
+                    new DateTimeImmutable('2020-01-01 19:00'),
+                    new DateTimeImmutable('2020-01-01 20:00'),
+                    'Divergence',
+                    'Main room'
+                )
+            ])
+        );
+
+        $actual->rescheduleFor(new DateTimeImmutable('2020-01-02 12:00'));
+        $this->assertEquals($expected, $actual);
+    }
+
 }

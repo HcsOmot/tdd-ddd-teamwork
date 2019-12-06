@@ -25,4 +25,13 @@ class MeetingDuration
         $this->start = $start;
         $this->end = $end;
     }
+
+    public function rescheduleFor(DateTimeImmutable $rescheduledStart): MeetingDuration
+    {
+        $startOffset = $this->start->diff($rescheduledStart);
+        $newStart = $this->start->add($startOffset);
+        $newEnd = $this->end->add($startOffset);
+
+        return new self($newStart, $newEnd);
+    }
 }

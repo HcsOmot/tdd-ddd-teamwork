@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
@@ -34,6 +35,11 @@ final class Meeting
         $this->description = $description;
         $this->duration = $duration;
         $this->program = $program;
+    }
+
+    public function rescheduleFor(DateTimeImmutable $newStart)
+    {
+        $this->duration = $this->duration->rescheduleFor($newStart);
     }
 
 }
