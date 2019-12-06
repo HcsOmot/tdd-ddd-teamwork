@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting\Tests;
 
+use DateInterval;
 use DateTimeImmutable;
 use DomainException;
 use InvalidArgumentException;
@@ -144,7 +145,7 @@ final class MeetingTest extends TestCase
                 new ProgramSlot(
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-02 12:00'),
-                        new DateTimeImmutable('2020-01-02 14:00')
+                        new DateTimeImmutable('2020-01-02 13:00')
                     ),
                     'Divergence',
                     'Main room'
@@ -152,7 +153,8 @@ final class MeetingTest extends TestCase
             ])
         );
 
-        $actual->rescheduleFor(new DateTimeImmutable('2020-01-02 12:00'));
+        $scheduleDiff = new DateInterval('PT17H');
+        $actual->rescheduleBy($scheduleDiff);
         $this->assertEquals($expected, $actual);
     }
 
@@ -200,15 +202,15 @@ final class MeetingTest extends TestCase
                 new ProgramSlot(
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-02 12:00'),
-                        new DateTimeImmutable('2020-01-02 14:00')
+                        new DateTimeImmutable('2020-01-02 13:00')
                     ),
                     'Divergence',
                     'Main room'
                 ),
                 new ProgramSlot(
                     new ProgramSlotDuration(
-                        new DateTimeImmutable('2020-01-02 14:00'),
-                        new DateTimeImmutable('2020-01-02 16:00')
+                        new DateTimeImmutable('2020-01-02 13:00'),
+                        new DateTimeImmutable('2020-01-02 14:00')
                     ),
                     'Divergence',
                     'Main room'
@@ -216,7 +218,8 @@ final class MeetingTest extends TestCase
             ])
         );
 
-        $actual->rescheduleFor(new DateTimeImmutable('2020-01-02 12:00'));
+        $scheduleDiff = new DateInterval('PT17H');
+        $actual->rescheduleBy($scheduleDiff);
         $this->assertEquals($expected, $actual);
     }
 

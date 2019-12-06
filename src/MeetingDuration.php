@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateInterval;
 use DateTimeImmutable;
 use DomainException;
 
@@ -26,11 +27,10 @@ class MeetingDuration
         $this->end = $end;
     }
 
-    public function rescheduleFor(DateTimeImmutable $rescheduledStart): MeetingDuration
+    public function rescheduleBy(DateInterval $offset): MeetingDuration
     {
-        $startOffset = $this->start->diff($rescheduledStart);
-        $newStart = $this->start->add($startOffset);
-        $newEnd = $this->end->add($startOffset);
+        $newStart = $this->start->add($offset);
+        $newEnd = $this->end->add($offset);
 
         return new self($newStart, $newEnd);
     }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
+use DateInterval;
 use DateTimeImmutable;
 use Webmozart\Assert\Assert;
 
@@ -21,12 +22,12 @@ final class Program
         $this->programSlots = $programSlots;
     }
 
-    public function rescheduleFor(DateTimeImmutable $newStart): Program
+    public function rescheduleFor(DateInterval $offset): Program
     {
         $rescheduledPrograms = [];
         foreach ($this->programSlots as $programSlot) {
             /** @var ProgramSlot $programSlot */
-            $rescheduledPrograms[] = $programSlot->rescheduleFor($newStart);
+            $rescheduledPrograms[] = $programSlot->rescheduleBy($offset);
         }
         return new self($rescheduledPrograms);
     }
