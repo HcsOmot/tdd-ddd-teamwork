@@ -9,6 +9,7 @@ use Procurios\Meeting\Meeting;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use PHPUnit\Framework\TestCase;
+use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
 final class MeetingTest extends TestCase
@@ -19,7 +20,7 @@ final class MeetingTest extends TestCase
             Meeting::class,
             new Meeting(
                 Uuid::uuid4(),
-                'TDD, DDD & Teamwork',
+                new Title('TDD, DDD & Teamwork'),
                 'This is a silly workshop, don\'t come',
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00'),

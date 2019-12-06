@@ -10,7 +10,7 @@ final class Meeting
 {
     /** @var UuidInterface */
     private $meetingId;
-    /** @var string */
+    /** @var Title */
     private $title;
     /** @var string */
     private $description;
@@ -23,7 +23,7 @@ final class Meeting
 
     public function __construct(
         UuidInterface $meetingId,
-        string $title,
+        Title $title,
         string $description,
         DateTimeImmutable $start,
         DateTimeImmutable $end,
