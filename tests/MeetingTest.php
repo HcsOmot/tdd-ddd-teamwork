@@ -76,4 +76,19 @@ final class MeetingTest extends TestCase
             ])
         );
     }
+
+    public function testThatMeetingMustHaveAtLeastOneProgrammeSlot()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Meeting must have at least one Programme Slot');
+
+        new Meeting(
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new DateTimeImmutable('2020-01-01 21:00'),
+            new DateTimeImmutable('2020-01-01 19:00'),
+            new Program([])
+        );
+    }
 }

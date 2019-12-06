@@ -16,6 +16,7 @@ final class Program
     public function __construct(array $programSlots)
     {
         Assert::allIsInstanceOf($programSlots, ProgramSlot::class);
+        Assert::minCount($programSlots, 1, 'Meeting must have at least one Programme Slot');
         $this->programSlots = $programSlots;
     }
 }
