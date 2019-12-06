@@ -3,22 +3,22 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
-use DateTimeImmutable;
-use DomainException;
 use Ramsey\Uuid\UuidInterface;
 
 final class Meeting
 {
     /** @var UuidInterface */
     private $meetingId;
+
     /** @var Title */
     private $title;
+
     /** @var string */
     private $description;
-    /** @var DateTimeImmutable */
-    private $start;
-    /** @var DateTimeImmutable */
-    private $end;
+
+    /** @var MeetingDuration */
+    private $duration;
+
     /** @var Program */
     private $program;
 
@@ -26,23 +26,14 @@ final class Meeting
         UuidInterface $meetingId,
         Title $title,
         string $description,
-        DateTimeImmutable $start,
-        DateTimeImmutable $end,
+        MeetingDuration $duration,
         Program $program
     ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
-        $this->cannotEndBeforeItStarts($start, $end);
-        $this->start = $start;
-        $this->end = $end;
+        $this->duration = $duration;
         $this->program = $program;
     }
 
-    private function cannotEndBeforeItStarts(DateTimeImmutable $start, DateTimeImmutable $end)
-    {
-        if ($end < $start) {
-            throw new DomainException('Meeting cannot end before it has started');
-        }
-    }
 }

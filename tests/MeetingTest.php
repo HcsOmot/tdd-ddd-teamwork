@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DomainException;
 use InvalidArgumentException;
 use Procurios\Meeting\Meeting;
+use Procurios\Meeting\MeetingDuration;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use PHPUnit\Framework\TestCase;
@@ -23,8 +24,10 @@ final class MeetingTest extends TestCase
                 Uuid::uuid4(),
                 new Title('TDD, DDD & Teamwork'),
                 'This is a silly workshop, don\'t come',
-                new DateTimeImmutable('2020-01-01 19:00'),
-                new DateTimeImmutable('2020-01-01 21:00'),
+                new MeetingDuration(
+                    new DateTimeImmutable('2020-01-01 19:00'),
+                    new DateTimeImmutable('2020-01-01 21:00')
+                ),
                 new Program([
                     new ProgramSlot(
                         new DateTimeImmutable('2020-01-01 19:00'),
@@ -58,8 +61,10 @@ final class MeetingTest extends TestCase
             Uuid::uuid4(),
             new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
-            new DateTimeImmutable('2020-01-01 21:00'),
-            new DateTimeImmutable('2020-01-01 19:00'),
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 21:00'),
+                new DateTimeImmutable('2020-01-01 19:00')
+            ),
             new Program([
                 new ProgramSlot(
                     new DateTimeImmutable('2020-01-01 19:00'),
@@ -86,8 +91,10 @@ final class MeetingTest extends TestCase
             Uuid::uuid4(),
             new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
-            new DateTimeImmutable('2020-01-01 21:00'),
-            new DateTimeImmutable('2020-01-01 19:00'),
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 19:00'),
+                new DateTimeImmutable('2020-01-01 21:00')
+            ),
             new Program([])
         );
     }
