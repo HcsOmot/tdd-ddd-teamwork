@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DomainException;
 use InvalidArgumentException;
 use Procurios\Meeting\Meeting;
+use Procurios\Meeting\Meeting\ProgramSlotDuration;
 use Procurios\Meeting\MeetingDuration;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
@@ -30,14 +31,18 @@ final class MeetingTest extends TestCase
                 ),
                 new Program([
                     new ProgramSlot(
-                        new DateTimeImmutable('2020-01-01 19:00'),
-                        new DateTimeImmutable('2020-01-01 20:00'),
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2020-01-01 19:00'),
+                            new DateTimeImmutable('2020-01-01 20:00')
+                        ),
                         'Divergence',
                         'Main room'
                     ),
                     new ProgramSlot(
-                        new DateTimeImmutable('2020-01-01 20:00'),
-                        new DateTimeImmutable('2020-01-01 21:00'),
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2020-01-01 20:00'),
+                            new DateTimeImmutable('2020-01-01 21:00')
+                        ),
                         'Convergence',
                         'Main room'
                     ),
@@ -67,14 +72,18 @@ final class MeetingTest extends TestCase
             ),
             new Program([
                 new ProgramSlot(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00'),
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
                     'Divergence',
                     'Main room'
                 ),
                 new ProgramSlot(
-                    new DateTimeImmutable('2020-01-01 20:00'),
-                    new DateTimeImmutable('2020-01-01 21:00'),
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
                     'Convergence',
                     'Main room'
                 ),
@@ -113,8 +122,10 @@ final class MeetingTest extends TestCase
             ),
             new Program([
                 new ProgramSlot(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00'),
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
                     'Divergence',
                     'Main room'
                 )
@@ -131,8 +142,10 @@ final class MeetingTest extends TestCase
             ),
             new Program([
                 new ProgramSlot(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00'),
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
                     'Divergence',
                     'Main room'
                 )
