@@ -143,8 +143,72 @@ final class MeetingTest extends TestCase
             new Program([
                 new ProgramSlot(
                     new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-02 12:00'),
+                        new DateTimeImmutable('2020-01-02 14:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                )
+            ])
+        );
+
+        $actual->rescheduleFor(new DateTimeImmutable('2020-01-02 12:00'));
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testThatMultipleProgramSlotsInMeetingWillBeRescheduled()
+    {
+        $meetingId = Uuid::uuid4();
+
+        $actual = new Meeting(
+            $meetingId,
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 19:00'),
+                new DateTimeImmutable('2020-01-01 21:00')
+            ),
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                )
+            ])
+        );
+
+        $expected = new Meeting(
+            $meetingId,
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-02 12:00'),
+                new DateTimeImmutable('2020-01-02 14:00')
+            ),
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-02 12:00'),
+                        new DateTimeImmutable('2020-01-02 14:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-02 14:00'),
+                        new DateTimeImmutable('2020-01-02 16:00')
                     ),
                     'Divergence',
                     'Main room'

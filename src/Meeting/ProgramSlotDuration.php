@@ -8,7 +8,25 @@ use DateTimeImmutable;
 
 class ProgramSlotDuration
 {
-    public function __construct(DateTimeImmutable $param, DateTimeImmutable $param1)
+    /** @var DateTimeImmutable */
+    private $start;
+
+    /** @var DateTimeImmutable */
+    private $end;
+
+    public function __construct(DateTimeImmutable $start, DateTimeImmutable $end)
     {
+        $this->start = $start;
+        $this->end = $end;
+    }
+
+    public function rescheduleFor(DateTimeImmutable $newStart): ProgramSlotDuration
+    {
+        $startOffset = $this->start->diff($newStart);
+        $rescheduledStart = $this->start->add($startOffset);
+        $slotDuration = $this->start->diff($this->end);
+        $rescheduledEnd = $this->end->add($startOffset)->add($slotDuration);
+
+        return new self($rescheduledStart, $rescheduledEnd);
     }
 }

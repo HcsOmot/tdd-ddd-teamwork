@@ -40,6 +40,7 @@ final class Meeting
     public function rescheduleFor(DateTimeImmutable $newStart)
     {
         $this->duration = $this->duration->rescheduleFor($newStart);
+        $this->program = $this->program->rescheduleFor($newStart);
     }
 
 }
