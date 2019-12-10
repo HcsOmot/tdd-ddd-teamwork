@@ -34,4 +34,9 @@ class MeetingDuration
 
         return new self($newStart, $newEnd);
     }
+
+    public function calculateOffset(DateTimeImmutable $newStart): DateInterval
+    {
+        return $this->start->diff($newStart);
+    }
 }

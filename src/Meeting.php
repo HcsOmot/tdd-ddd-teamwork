@@ -38,10 +38,11 @@ final class Meeting
         $this->program = $program;
     }
 
-    public function rescheduleBy(DateInterval $newStart)
+    public function rescheduleFor(DateTimeImmutable $newStart)
     {
-        $this->duration = $this->duration->rescheduleBy($newStart);
-        $this->program = $this->program->rescheduleFor($newStart);
+        $startOffset = $this->duration->calculateOffset($newStart);
+        $this->duration = $this->duration->rescheduleBy($startOffset);
+        $this->program = $this->program->rescheduleFor($startOffset);
     }
 
 }

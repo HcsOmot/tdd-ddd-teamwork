@@ -153,8 +153,8 @@ final class MeetingTest extends TestCase
             ])
         );
 
-        $scheduleDiff = new DateInterval('PT17H');
-        $actual->rescheduleBy($scheduleDiff);
+        $rescheduledStart = new DateTimeImmutable('2020-01-02 12:00');
+        $actual->rescheduleFor($rescheduledStart);
         $this->assertEquals($expected, $actual);
     }
 
@@ -218,8 +218,8 @@ final class MeetingTest extends TestCase
             ])
         );
 
-        $scheduleDiff = new DateInterval('PT17H');
-        $actual->rescheduleBy($scheduleDiff);
+        $rescheduledStart = new DateTimeImmutable('2020-01-02 12:00');
+        $actual->rescheduleFor($rescheduledStart);
         $this->assertEquals($expected, $actual);
     }
 
