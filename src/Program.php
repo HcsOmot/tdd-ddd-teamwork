@@ -39,23 +39,9 @@ final class Program
         foreach ($programSlots as $current) {
             /** @var ProgramSlot[] $programSlots */
             foreach ($programSlots as $compared) {
-                if ($current === $compared) {
-                    continue;
+                if ($current->overlapsWith($compared)) {
+                    throw new DomainException();
                 }
-
-                if ($current->getRoom() !== $compared->getRoom()) {
-                    continue;
-                }
-
-                if ($current->before($compared)) {
-                    continue;
-                }
-
-                if ($current->after($compared)) {
-                    continue;
-                }
-
-                throw new DomainException();
             }
         }
     }

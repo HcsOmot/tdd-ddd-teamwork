@@ -58,4 +58,21 @@ final class ProgramSlot
 
         return false;
     }
+
+    public function overlapsWith(ProgramSlot $that): bool
+    {
+        if ($this->room !== $that->getRoom()) {
+            return false;
+        }
+
+        if ($this === $that) {
+            return false;
+        }
+
+        if ((false === $this->before($that)) && (false === $this->after($that))) {
+            return true;
+        }
+
+        return false;
+    }
 }
