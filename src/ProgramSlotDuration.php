@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Procurios\Meeting\Meeting;
+namespace Procurios\Meeting;
 
 use DateInterval;
 use DateTimeImmutable;

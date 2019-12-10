@@ -3,16 +3,15 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting\Tests;
 
-use DateInterval;
 use DateTimeImmutable;
 use DomainException;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use Procurios\Meeting\Meeting;
-use Procurios\Meeting\Meeting\ProgramSlotDuration;
 use Procurios\Meeting\MeetingDuration;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
-use PHPUnit\Framework\TestCase;
+use Procurios\Meeting\ProgramSlotDuration;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 

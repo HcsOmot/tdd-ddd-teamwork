@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateInterval;
-use Procurios\Meeting\Meeting\ProgramSlotDuration;
 
 final class ProgramSlot
 {
