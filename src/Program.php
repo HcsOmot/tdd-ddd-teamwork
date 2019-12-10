@@ -47,11 +47,11 @@ final class Program
                     continue;
                 }
 
-                if ($current->getDuration()->getEnd() <= $compared->getDuration()->getStart()) {
+                if ($current->getDuration()->before($compared->getDuration())) {
                     continue;
                 }
 
-                if ($current->getDuration()->getStart() >= $compared->getDuration()->getEnd()) {
+                if ($current->getDuration()->after($compared->getDuration())) {
                     continue;
                 }
 
