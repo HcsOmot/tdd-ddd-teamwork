@@ -40,4 +40,22 @@ final class ProgramSlot
     {
         return $this->duration;
     }
+
+    public function before(ProgramSlot $that): bool
+    {
+        if ($this->duration->before($that->getDuration())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function after(ProgramSlot $that): bool
+    {
+        if ($this->duration->after($that->getDuration())) {
+            return true;
+        }
+
+        return false;
+    }
 }

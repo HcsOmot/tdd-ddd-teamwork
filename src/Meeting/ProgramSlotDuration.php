@@ -39,18 +39,18 @@ class ProgramSlotDuration
         return $this->end;
     }
 
-    public function before(ProgramSlotDuration $other): bool
+    public function before(ProgramSlotDuration $that): bool
     {
-        if ($this->end <= $other->getStart()) {
+        if ($this->end <= $that->getStart()) {
             return true;
         }
 
         return false;
     }
 
-    public function after(ProgramSlotDuration $other): bool
+    public function after(ProgramSlotDuration $that): bool
     {
-        if ($this->start >= $other->getEnd()) {
+        if ($this->start >= $that->getEnd()) {
             return true;
         }
 
