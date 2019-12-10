@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Procurios\Meeting;
 
-use DateInterval;
 use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 

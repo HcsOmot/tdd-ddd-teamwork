@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateInterval;
-use DateTimeImmutable;
 use Procurios\Meeting\Meeting\ProgramSlotDuration;
 
 final class ProgramSlot
@@ -30,5 +29,15 @@ final class ProgramSlot
         $rescheduledSlotDuration = $this->duration->rescheduleBy($offset);
 
         return new self($rescheduledSlotDuration,$this->title, $this->room);
+    }
+
+    public function getRoom(): string
+    {
+        return $this->room;
+    }
+
+    public function getDuration(): ProgramSlotDuration
+    {
+        return $this->duration;
     }
 }

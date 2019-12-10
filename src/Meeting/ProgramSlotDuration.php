@@ -24,9 +24,18 @@ class ProgramSlotDuration
     public function rescheduleBy(DateInterval $offset): ProgramSlotDuration
     {
         $rescheduledStart = $this->start->add($offset);
-        $slotDuration = $this->start->diff($this->end);
         $rescheduledEnd = $this->end->add($offset);
 
         return new self($rescheduledStart, $rescheduledEnd);
+    }
+
+    public function getStart(): DateTimeImmutable
+    {
+        return $this->start;
+    }
+
+    public function getEnd(): DateTimeImmutable
+    {
+        return $this->end;
     }
 }
