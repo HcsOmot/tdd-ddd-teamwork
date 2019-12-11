@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Procurios\Meeting;
 
 use DateTimeImmutable;
+use DomainException;
 use Ramsey\Uuid\UuidInterface;
+use Webmozart\Assert\Assert;
 
 final class Meeting
 {
@@ -22,19 +24,31 @@ final class Meeting
 
     /** @var Program */
     private $program;
+    
+    /**
+     * @var int
+     */
+    private $maxAttendeeCount;
+    
+    /**
+     * @var MeetingRegistration[]
+     */
+    private $registrations = [];
 
     public function __construct(
         UuidInterface $meetingId,
         Title $title,
         string $description,
         MeetingDuration $duration,
-        Program $program
+        Program $program,
+        int $maxAttendeeCount
     ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
         $this->duration = $duration;
         $this->program = $program;
+        $this->maxAttendeeCount = $maxAttendeeCount;
     }
 
     public function rescheduleFor(DateTimeImmutable $newStart)
@@ -44,4 +58,22 @@ final class Meeting
         $this->program = $this->program->rescheduleFor($startOffset);
     }
 
+    public function register(MeetingRegistration $newRegistration): void
+    {
+        foreach ($this->registrations as $existingRegistration) {
+            if ($existingRegistration->getEmail()->equals($newRegistration->getEmail())) {
+                throw new DomainException('User with this email already registered.');
+            }
+        }
+
+        $seatsRequired = $newRegistration->seatsRequired();
+        
+        if ($this->maxAttendeeCount >= $seatsRequired) {
+            $this->registrations[] = $newRegistration;
+            $this->maxAttendeeCount-=$seatsRequired;
+            return;
+        }
+
+        throw new DomainException('Not enough seats available.');
+    }
 }
