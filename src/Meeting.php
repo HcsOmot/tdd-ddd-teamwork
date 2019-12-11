@@ -24,12 +24,12 @@ final class Meeting
 
     /** @var Program */
     private $program;
-    
+
     /**
      * @var int
      */
-    private $maxAttendeeCount;
-    
+    private $availableSeats;
+
     /**
      * @var MeetingRegistration[]
      */
@@ -42,13 +42,14 @@ final class Meeting
         MeetingDuration $duration,
         Program $program,
         int $maxAttendeeCount
-    ) {
+    )
+    {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
         $this->duration = $duration;
         $this->program = $program;
-        $this->maxAttendeeCount = $maxAttendeeCount;
+        $this->availableSeats = $maxAttendeeCount;
     }
 
     public function rescheduleFor(DateTimeImmutable $newStart)
@@ -67,13 +68,43 @@ final class Meeting
         }
 
         $seatsRequired = $newRegistration->seatsRequired();
-        
-        if ($this->maxAttendeeCount >= $seatsRequired) {
-            $this->registrations[] = $newRegistration;
-            $this->maxAttendeeCount-=$seatsRequired;
+
+        if ($this->availableSeats >= $seatsRequired) {
+            $this->registrations[(string)$newRegistration->getId()] = $newRegistration;
+            $this->availableSeats -= $seatsRequired;
             return;
         }
 
         throw new DomainException('Not enough seats available.');
+    }
+
+    public function updateRegistration(MeetingRegistration $registration): void
+    {
+        $seatsRequired = $registration->seatsRequired();
+        $originalSeatsRequired = $this->registrations[(string)$registration->getId()]->seatsRequired();
+
+        $delta = $originalSeatsRequired - $seatsRequired;
+
+        if ($this->availableSeats + $delta >= 0) {
+            $this->registrations[(string)$registration->getId()] = $registration;
+            $this->availableSeats = +$delta;
+            return;
+        }
+
+        throw new DomainException('Not enough seats available.');
+    }
+
+    // TODO: rules and behaviour belong together - in a consistent location - removing and adding plus1 from
+    //inside of meetingRegistration object separates the rule (can't overbook - stated in the Meeting) from the
+// behaviour (add/remove plus1 - stated in the meetingRegistration) 
+    public function removePlusOne(UuidInterface $registrationId): void
+    {
+//        $registration = $this->registrations[(string) $registrationId];
+//        
+//        $registration = $registration->removePlusOne();
+//        
+//        $this->registrations[(string) $registrationId] = $registration;
+        
+        $this->availableSeats++;
     }
 }

@@ -24,11 +24,17 @@ class MeetingRegistration
         $this->attendee = $attendee;
     }
 
-    public function addPlusOne(EmailAddress $otherAttendee): void
+    public function addPlusOne(EmailAddress $otherAttendee): MeetingRegistration
     {
         if (null === $this->plusOne) {
-            $this->plusOne = $otherAttendee;
-            return;
+            $updatedRegistration = new self(
+                $this->id,
+                $this->attendee
+            );
+            
+            $updatedRegistration->plusOne = $otherAttendee;
+            
+            return $updatedRegistration;
         }
 
         throw new DomainException('Cannot add more than 1 PlusOne attendees.');
@@ -41,6 +47,19 @@ class MeetingRegistration
 
     public function seatsRequired(): int
     {
-        return isset($this->plusOne) ? 2 : 1;
+        return $this->plusOne === null ? 1 : 2;
+    }
+
+    public function getId(): UuidInterface
+    {
+        return $this->id;
+    }
+
+    public function removePlusOne(): MeetingRegistration
+    {
+        return new self(
+            $this->id,
+            $this->attendee
+        );
     }
 }

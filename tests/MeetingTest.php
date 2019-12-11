@@ -327,7 +327,8 @@ final class MeetingTest extends TestCase
     public function testThatAttendeeCanRegisterWithPlusOne(): void
     {
         $this->expectException(DomainException::class);
-        
+        $this->expectExceptionMessage('Not enough seats available.');
+
         $actual = new Meeting(
             Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
@@ -359,13 +360,127 @@ final class MeetingTest extends TestCase
             Uuid::uuid4(),
             new EmailAddress('primary@attendee.tld')
         );
-        $registration->addPlusOne(new EmailAddress('plus1@attendee.tld'));
+        $registration = $registration->addPlusOne(new EmailAddress('plus1@attendee.tld'));
         
         $actual->register($registration);
         
         $actual->register(new MeetingRegistration(
             Uuid::uuid4(),
             new EmailAddress('another@attendee.tld'))
+        );
+    }
+
+    public function testThatAttendeeCanAddTheirPlusOneLaterOn(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Not enough seats available.');
+
+        $actual = new Meeting(
+            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 19:00'),
+                new DateTimeImmutable('2020-01-01 21:00')
+            ), new Program([
+            new ProgramSlot(
+                new ProgramSlotDuration(
+                    new DateTimeImmutable('2020-01-01 19:00'),
+                    new DateTimeImmutable('2020-01-01 20:00')
+                ),
+                'Divergence',
+                'Main room'
+            ),
+            new ProgramSlot(
+                new ProgramSlotDuration(
+                    new DateTimeImmutable('2020-01-01 20:30:00'),
+                    new DateTimeImmutable('2020-01-01 21:00')
+                ),
+                'Convergence',
+                'Main room'
+            )
+        ]),
+            2
+        );
+
+        $registration = new MeetingRegistration(
+            Uuid::uuid4(),
+            new EmailAddress('primary@attendee.tld')
+        );
+
+        $actual->register($registration);
+
+        $registration->addPlusOne(new EmailAddress('plus1@attendee.tld'));
+
+        $actual->updateRegistration($registration);
+        
+        $actual->register(
+            new MeetingRegistration(
+                Uuid::uuid4(),
+                new EmailAddress('another@attendee.tld')
+            )
+        );
+    }
+
+    public function testThatRemovingPlusOneEnablesAdditionalRegistration(): void
+    {
+        $actual = new Meeting(
+            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 19:00'),
+                new DateTimeImmutable('2020-01-01 21:00')
+            ), new Program([
+            new ProgramSlot(
+                new ProgramSlotDuration(
+                    new DateTimeImmutable('2020-01-01 19:00'),
+                    new DateTimeImmutable('2020-01-01 20:00')
+                ),
+                'Divergence',
+                'Main room'
+            ),
+            new ProgramSlot(
+                new ProgramSlotDuration(
+                    new DateTimeImmutable('2020-01-01 20:30:00'),
+                    new DateTimeImmutable('2020-01-01 21:00')
+                ),
+                'Convergence',
+                'Main room'
+            )
+        ]),
+            2
+        );
+
+        $registration = new MeetingRegistration(
+            Uuid::uuid4(),
+            new EmailAddress('primary@attendee.tld')
+        );
+        $registration = $registration->addPlusOne(new EmailAddress('plus1@attendee.tld'));
+
+        $actual->register($registration);
+
+//        $registration = $registration->removePlusOne();
+        
+        $actual->removePlusOne($registration->getId());
+        
+//        $actual->updateRegistration($registration);
+
+        $actual->register(
+            new MeetingRegistration(
+                Uuid::uuid4(),
+                new EmailAddress('another@attendee.tld')
+            )
+        );
+
+        $this->assertInstanceOf(Meeting::class, $actual);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Not enough seats available.');
+
+        $actual->register(
+            new MeetingRegistration(
+                Uuid::uuid4(),
+                new EmailAddress('notgonnafit@anymore.tld')
+            )
         );
     }
 }
