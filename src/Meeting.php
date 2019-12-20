@@ -5,6 +5,7 @@ namespace Procurios\Meeting;
 
 use DateTimeImmutable;
 use DomainException;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Webmozart\Assert\Assert;
 
@@ -95,16 +96,59 @@ final class Meeting
     }
 
     // TODO: rules and behaviour belong together - in a consistent location - removing and adding plus1 from
-    //inside of meetingRegistration object separates the rule (can't overbook - stated in the Meeting) from the
-// behaviour (add/remove plus1 - stated in the meetingRegistration) 
+    //  inside of meetingRegistration object separates the rule (can't overbook - stated in the Meeting) from the
+    //  behaviour (add/remove plus1 - stated in the meetingRegistration) 
     public function removePlusOne(UuidInterface $registrationId): void
     {
-//        $registration = $this->registrations[(string) $registrationId];
-//        
-//        $registration = $registration->removePlusOne();
-//        
-//        $this->registrations[(string) $registrationId] = $registration;
+        $registration = $this->registrations[(string) $registrationId];
+        
+        $registration = $registration->removePlusOne();
+        
+        $this->registrations[(string) $registrationId] = $registration;
         
         $this->availableSeats++;
+    }
+
+    public function addPlusOne(UuidInterface $registrationId): void
+    {
+        $this->availableSeats--;
+    }
+
+    public function removeRegistration(UuidInterface $registrationId): void
+    {
+        $seatsRequired = ($this->registrations[(string) $registrationId])->seatsRequired();
+        $this->availableSeats+= $seatsRequired;
+    }
+
+    public function addPlusOneAttendee(UuidInterface $registrationId, EmailAddress $attendee): void
+    {
+        $registration = $this->registrations[(string) $registrationId];
+        $registration->addPlusOne($attendee);
+    }
+
+//    php doesn't have method overloading, so it's not too bad
+    public function registerALTERNATIVE(EmailAddress $primaryAttendee, ?EmailAddress $plusOneAttendee): UuidInterface
+    {
+        $registrationId = Uuid::uuid4();
+        
+        $registration = new MeetingRegistration($registrationId, $primaryAttendee);
+        if (null !== $plusOneAttendee) {
+//            TODO: This had me worried for a moment - forgot that VO modification returns a new instance
+            $registration = $registration->addPlusOne($plusOneAttendee);
+        }
+        
+        $this->register($registration);
+//        returning the value here breaks CQS - we can't know whats happening without asking - ID should be passwd in
+// as argument just like attendees
+        return $registrationId;
+    }
+
+    public function replacePlusOne(UuidInterface $registrationId, EmailAddress $newPlusOne): void
+    {
+        $registration = $this->registrations[(string) $registrationId];
+        
+        $updatedRegistration = $registration->replacePlusOne($newPlusOne);
+        
+        $this->register($updatedRegistration);
     }
 }
