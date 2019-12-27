@@ -115,8 +115,11 @@ final class Meeting
 
         $primaryAttendee = $registration->getEmail();
 
-//        $updatedRegistration = $registration->replacePlusOne($newPlusOne);
-//        $this->registrations[(string) $updatedRegistration->getId()] = $updatedRegistration;
         $this->register($registrationId, $primaryAttendee, $newPlusOne);
+    }
+
+    public function getDuration(): MeetingDuration
+    {
+        return $this->duration;
     }
 }

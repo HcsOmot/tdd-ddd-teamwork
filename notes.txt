@@ -1,0 +1,39 @@
+Venue has room
+Room is in venue
+Meeting programs are in room
+Meeting is in Venue
+
+RULES:
+Meetings cannot overlap in Venue
+
+Overlap:
+
+Venue GreatVenue
+Meeting Awesome is in GreatVenue at Noon til 2PM
+Meeting BetterOne in GreatVenue at Noon til 5PM
+
+3 most important things:
+
+1. Rules 
+2. Behaviour
+3. Information
+
+Behaviours:
+- organizers should be able too book venue for meetings
+
+Information:
+- Meeting details? - meeting duration
+- Venue availability
+
+
+How close conceptually are Meetings and Venues?
+How close different concepts in the problem space are?
+
+
+what happens when the meeting is rescheduled?
+
+TODO: next week
+
+TRY!! (Yoda wouldn't like this...) to reschedule the meeting
+
+pros & cons of different approaches
