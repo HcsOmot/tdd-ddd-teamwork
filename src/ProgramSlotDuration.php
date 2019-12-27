@@ -21,7 +21,7 @@ class ProgramSlotDuration
         $this->end = $end;
     }
 
-    public function rescheduleBy(DateInterval $offset): ProgramSlotDuration
+    public function rescheduleBy(DateInterval $offset): self
     {
         $rescheduledStart = $this->start->add($offset);
         $rescheduledEnd = $this->end->add($offset);
@@ -39,7 +39,7 @@ class ProgramSlotDuration
         return $this->end;
     }
 
-    public function before(ProgramSlotDuration $that): bool
+    public function before(self $that): bool
     {
         if ($this->end <= $that->getStart()) {
             return true;
@@ -48,7 +48,7 @@ class ProgramSlotDuration
         return false;
     }
 
-    public function after(ProgramSlotDuration $that): bool
+    public function after(self $that): bool
     {
         if ($this->start >= $that->getEnd()) {
             return true;

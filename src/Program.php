@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Procurios\Meeting;
@@ -23,17 +24,18 @@ final class Program
         $this->programSlots = $programSlots;
     }
 
-    public function rescheduleFor(DateInterval $offset): Program
+    public function rescheduleFor(DateInterval $offset): self
     {
         $rescheduledPrograms = [];
         foreach ($this->programSlots as $programSlot) {
-            /** @var ProgramSlot $programSlot */
+            // @var ProgramSlot $programSlot
             $rescheduledPrograms[] = $programSlot->rescheduleBy($offset);
         }
+
         return new self($rescheduledPrograms);
     }
 
-    private function preventProgramSlotOverlap(array $programSlots)
+    private function preventProgramSlotOverlap(array $programSlots): void
     {
         /** @var ProgramSlot[] $programSlots */
         foreach ($programSlots as $current) {

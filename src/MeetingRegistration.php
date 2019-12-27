@@ -14,7 +14,7 @@ class MeetingRegistration
 
     /** @var EmailAddress */
     private $attendee;
-    
+
     /** @var EmailAddress */
     private $plusOne;
 
@@ -24,16 +24,16 @@ class MeetingRegistration
         $this->attendee = $attendee;
     }
 
-    public function addPlusOne(EmailAddress $otherAttendee): MeetingRegistration
+    public function addPlusOne(EmailAddress $otherAttendee): self
     {
         if (null === $this->plusOne) {
             $updatedRegistration = new self(
                 $this->id,
                 $this->attendee
             );
-            
+
             $updatedRegistration->plusOne = $otherAttendee;
-            
+
             return $updatedRegistration;
         }
 
@@ -47,7 +47,7 @@ class MeetingRegistration
 
     public function seatsRequired(): int
     {
-        return $this->plusOne === null ? 1 : 2;
+        return null === $this->plusOne ? 1 : 2;
     }
 
     public function getId(): UuidInterface
@@ -55,7 +55,7 @@ class MeetingRegistration
         return $this->id;
     }
 
-    public function removePlusOne(): MeetingRegistration
+    public function removePlusOne(): self
     {
         return new self(
             $this->id,

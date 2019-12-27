@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Procurios\Meeting\Tests;
@@ -6,58 +7,65 @@ namespace Procurios\Meeting\Tests;
 use DateTimeImmutable;
 use DomainException;
 use InvalidArgumentException;
-use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Procurios\Meeting\EmailAddress;
 use Procurios\Meeting\Meeting;
 use Procurios\Meeting\MeetingDuration;
-use Procurios\Meeting\MeetingRegistration;
 use Procurios\Meeting\Program;
 use Procurios\Meeting\ProgramSlot;
 use Procurios\Meeting\ProgramSlotDuration;
 use Procurios\Meeting\Title;
 use Ramsey\Uuid\Uuid;
 
+/**
+ * @coversNothing
+ *
+ * @small
+ */
 final class MeetingTest extends TestCase
 {
     public function testThatValidMeetingsCanBeInstantiated(): void
     {
-        $this->assertInstanceOf(
+        static::assertInstanceOf(
             Meeting::class,
             new Meeting(
-                Uuid::uuid4(), new Title('TDD, DDD & Teamwork'), 'This is a silly workshop, don\'t come',
+                Uuid::uuid4(),
+                new Title('TDD, DDD & Teamwork'),
+                'This is a silly workshop, don\'t come',
                 new MeetingDuration(
                     new DateTimeImmutable('2020-01-01 19:00'),
                     new DateTimeImmutable('2020-01-01 21:00')
-                ), new Program([
-                new ProgramSlot(
-                    new ProgramSlotDuration(
-                        new DateTimeImmutable('2020-01-01 19:00'),
-                        new DateTimeImmutable('2020-01-01 20:00')
-                    ),
-                    'Divergence',
-                    'Main room'
                 ),
-                new ProgramSlot(
-                    new ProgramSlotDuration(
-                        new DateTimeImmutable('2020-01-01 20:00'),
-                        new DateTimeImmutable('2020-01-01 21:00')
+                new Program([
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2020-01-01 19:00'),
+                            new DateTimeImmutable('2020-01-01 20:00')
+                        ),
+                        'Divergence',
+                        'Main room'
                     ),
-                    'Convergence',
-                    'Main room'
-                ),
-            ]), 10
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2020-01-01 20:00'),
+                            new DateTimeImmutable('2020-01-01 21:00')
+                        ),
+                        'Convergence',
+                        'Main room'
+                    ),
+                ]),
+                10
             )
         );
     }
 
-    public function testThatProgramOnlyAcceptsProgramSlots()
+    public function testThatProgramOnlyAcceptsProgramSlots(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Program([new DateTimeImmutable('2020-01-01 19:00')]);
     }
 
-    public function testThatMeetingCannotEndBeforeItStarted()
+    public function testThatMeetingCannotEndBeforeItStarted(): void
     {
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Meeting cannot end before it has started');
@@ -88,13 +96,13 @@ final class MeetingTest extends TestCase
                         'Convergence',
                         'Main room'
                     ),
-                    ]
+                ]
             ),
             10
         );
     }
 
-    public function testThatMeetingMustHaveAtLeastOneProgrammeSlot()
+    public function testThatMeetingMustHaveAtLeastOneProgrammeSlot(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Meeting must have at least one Programme Slot');
@@ -112,7 +120,62 @@ final class MeetingTest extends TestCase
         );
     }
 
-    public function testThatMeetingCanBeRescheduled()
+    public function testThatMeetingCanBeRescheduled(): void
+    {
+        $meetingId = Uuid::uuid4();
+
+        $actual = new Meeting(
+            $meetingId,
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-01 19:00'),
+                new DateTimeImmutable('2020-01-01 21:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2020-01-01 19:00'),
+                            new DateTimeImmutable('2020-01-01 20:00')
+                        ),
+                        'Divergence',
+                        'Main room'
+                    ),
+                ]
+            ),
+            10
+        );
+
+        $expected = new Meeting(
+            $meetingId,
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
+            new MeetingDuration(
+                new DateTimeImmutable('2020-01-02 12:00'),
+                new DateTimeImmutable('2020-01-02 14:00')
+            ),
+            new Program(
+                [
+                    new ProgramSlot(
+                        new ProgramSlotDuration(
+                            new DateTimeImmutable('2020-01-02 12:00'),
+                            new DateTimeImmutable('2020-01-02 13:00')
+                        ),
+                        'Divergence',
+                        'Main room'
+                    ),
+                ]
+            ),
+            10
+        );
+
+        $rescheduledStart = new DateTimeImmutable('2020-01-02 12:00');
+        $actual->rescheduleFor($rescheduledStart);
+        static::assertEquals($expected, $actual);
+    }
+
+    public function testThatMultipleProgramSlotsInMeetingWillBeRescheduled(): void
     {
         $meetingId = Uuid::uuid4();
 
@@ -132,13 +195,21 @@ final class MeetingTest extends TestCase
                     ),
                     'Divergence',
                     'Main room'
-                )
-                ]
-            ),10
+                ),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+            ]),
+            10
         );
 
         $expected = new Meeting(
-            $meetingId, 
+            $meetingId,
             new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
             new MeetingDuration(
@@ -151,133 +222,91 @@ final class MeetingTest extends TestCase
                         new DateTimeImmutable('2020-01-02 12:00'),
                         new DateTimeImmutable('2020-01-02 13:00')
                     ),
-                'Divergence',
-                'Main room'
-                )
-                ]
-            ),
+                    'Divergence',
+                    'Main room'
+                ),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-02 13:00'),
+                        new DateTimeImmutable('2020-01-02 14:00')
+                    ),
+                    'Divergence',
+                    'Main room'
+                ),
+            ]),
             10
         );
 
         $rescheduledStart = new DateTimeImmutable('2020-01-02 12:00');
         $actual->rescheduleFor($rescheduledStart);
-        $this->assertEquals($expected, $actual);
+        static::assertEquals($expected, $actual);
     }
 
-    public function testThatMultipleProgramSlotsInMeetingWillBeRescheduled()
-    {
-        $meetingId = Uuid::uuid4();
-
-        $actual = new Meeting(
-            $meetingId, new Title('TDD, DDD & Teamwork'), 'This is a silly workshop, don\'t come', new MeetingDuration(
-            new DateTimeImmutable('2020-01-01 19:00'),
-            new DateTimeImmutable('2020-01-01 21:00')
-        ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
-            ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 20:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
-                ),
-                'Divergence',
-                'Main room'
-            )
-        ]), 10
-        );
-
-        $expected = new Meeting(
-            $meetingId, new Title('TDD, DDD & Teamwork'), 'This is a silly workshop, don\'t come', new MeetingDuration(
-            new DateTimeImmutable('2020-01-02 12:00'),
-            new DateTimeImmutable('2020-01-02 14:00')
-        ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-02 12:00'),
-                    new DateTimeImmutable('2020-01-02 13:00')
-                ),
-                'Divergence',
-                'Main room'
-            ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-02 13:00'),
-                    new DateTimeImmutable('2020-01-02 14:00')
-                ),
-                'Divergence',
-                'Main room'
-            )
-        ]), 10
-        );
-
-        $rescheduledStart = new DateTimeImmutable('2020-01-02 12:00');
-        $actual->rescheduleFor($rescheduledStart);
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function testThatTwoSameProgramSlotsCannotOverlap()
+    public function testThatTwoSameProgramSlotsCannotOverlap(): void
     {
         $this->expectException(DomainException::class);
 
         new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'), 'This is a silly workshop, don\'t come',
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]), 10
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
+            10
         );
     }
 
-    public function testThatProgramSlotsCannotOverlap()
+    public function testThatProgramSlotsCannotOverlap(): void
     {
         $this->expectException(DomainException::class);
 
         new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'), 'This is a silly workshop, don\'t come',
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
+            'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:30:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]), 10
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:30:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
+            10
         );
     }
 
@@ -285,31 +314,33 @@ final class MeetingTest extends TestCase
     {
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('User with this email already registered.');
-        
+
         $actual = new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 20:30:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:30:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
             10
         );
 
@@ -325,34 +356,35 @@ final class MeetingTest extends TestCase
             null
         );
     }
-    
 
     public function testThatRemovingPlusOneEnablesAdditionalRegistration(): void
     {
         $actual = new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 20:30:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:30:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
             2
         );
 
@@ -371,7 +403,7 @@ final class MeetingTest extends TestCase
             null
         );
 
-        $this->assertInstanceOf(Meeting::class, $actual);
+        static::assertInstanceOf(Meeting::class, $actual);
 
         $this->expectException(DomainException::class);
         $this->expectExceptionMessage('Not enough seats available.');
@@ -386,29 +418,31 @@ final class MeetingTest extends TestCase
     public function testThatAttendeeCanCancelTheirRegistration(): void
     {
         $actual = new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 20:30:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:30:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
             2
         );
 
@@ -427,35 +461,37 @@ final class MeetingTest extends TestCase
             null
         );
 
-        $this->assertInstanceOf(Meeting::class, $actual);
+        static::assertInstanceOf(Meeting::class, $actual);
     }
 
     public function testThatPlusOneIsRemovedFromRegistration(): void
     {
         $actual = new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 20:30:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:30:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
             2
         );
 
@@ -464,13 +500,12 @@ final class MeetingTest extends TestCase
             $registrationId,
             new EmailAddress('primary@attendee.tld'),
             new EmailAddress('plus1@attendee.tld')
-            );
+        );
 
         $actual->removePlusOne($registrationId);
 
-        
         $actual->addPlusOneAttendee($registrationId, new EmailAddress('replacement@attendee.tld'));
-        $this->assertInstanceOf(Meeting::class, $actual);
+        static::assertInstanceOf(Meeting::class, $actual);
     }
 
     public function testThatAttendeeCanChangePlusOne(): void
@@ -479,29 +514,31 @@ final class MeetingTest extends TestCase
         $this->expectExceptionMessage('User with this email already registered.');
 
         $actual = new Meeting(
-            Uuid::uuid4(), new Title('TDD, DDD & Teamwork'),
+            Uuid::uuid4(),
+            new Title('TDD, DDD & Teamwork'),
             'This is a silly workshop, don\'t come',
             new MeetingDuration(
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
-            ), new Program([
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 19:00'),
-                    new DateTimeImmutable('2020-01-01 20:00')
-                ),
-                'Divergence',
-                'Main room'
             ),
-            new ProgramSlot(
-                new ProgramSlotDuration(
-                    new DateTimeImmutable('2020-01-01 20:30:00'),
-                    new DateTimeImmutable('2020-01-01 21:00')
+            new Program([
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 19:00'),
+                        new DateTimeImmutable('2020-01-01 20:00')
+                    ),
+                    'Divergence',
+                    'Main room'
                 ),
-                'Convergence',
-                'Main room'
-            )
-        ]),
+                new ProgramSlot(
+                    new ProgramSlotDuration(
+                        new DateTimeImmutable('2020-01-01 20:30:00'),
+                        new DateTimeImmutable('2020-01-01 21:00')
+                    ),
+                    'Convergence',
+                    'Main room'
+                ),
+            ]),
             2
         );
 
@@ -512,7 +549,7 @@ final class MeetingTest extends TestCase
         $actual->register($registrationId, $primaryAttendee, $additionalAttendee);
 
         $actual->replacePlusOne($registrationId, new EmailAddress('i-like-you@better.oh'));
-        
+
         $actual->register(Uuid::uuid4(), new EmailAddress('i-like-you@better.oh'), null);
     }
 }

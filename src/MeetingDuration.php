@@ -10,10 +10,9 @@ use DomainException;
 
 class MeetingDuration
 {
-
     /** @var DateTimeImmutable */
     private $start;
-    
+
     /** @var DateTimeImmutable */
     private $end;
 
@@ -22,12 +21,12 @@ class MeetingDuration
         if ($end < $start) {
             throw new DomainException('Meeting cannot end before it has started');
         }
-        
+
         $this->start = $start;
         $this->end = $end;
     }
 
-    public function rescheduleBy(DateInterval $offset): MeetingDuration
+    public function rescheduleBy(DateInterval $offset): self
     {
         $newStart = $this->start->add($offset);
         $newEnd = $this->end->add($offset);

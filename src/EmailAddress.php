@@ -18,7 +18,7 @@ class EmailAddress
         $this->emailAddress = $emailAddress;
     }
 
-    public function equals(EmailAddress $other): bool
+    public function equals(self $other): bool
     {
         return $this->emailAddress === $other->emailAddress;
     }

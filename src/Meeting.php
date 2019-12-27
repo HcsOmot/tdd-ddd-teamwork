@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Procurios\Meeting;
@@ -41,8 +42,7 @@ final class Meeting
         MeetingDuration $duration,
         Program $program,
         int $maxAttendeeCount
-    )
-    {
+    ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
@@ -57,22 +57,22 @@ final class Meeting
         $this->duration = $this->duration->rescheduleBy($startOffset);
         $this->program = $this->program->rescheduleFor($startOffset);
     }
-    
+
     public function removePlusOne(UuidInterface $registrationId): void
     {
         $registration = $this->registrations[(string) $registrationId];
-        
+
         $registration = $registration->removePlusOne();
-        
+
         $this->registrations[(string) $registrationId] = $registration;
-        
-        $this->availableSeats++;
+
+        ++$this->availableSeats;
     }
 
     public function removeRegistration(UuidInterface $registrationId): void
     {
         $seatsRequired = ($this->registrations[(string) $registrationId])->seatsRequired();
-        $this->availableSeats+= $seatsRequired;
+        $this->availableSeats += $seatsRequired;
     }
 
     public function addPlusOneAttendee(UuidInterface $registrationId, EmailAddress $attendee): void
@@ -85,8 +85,7 @@ final class Meeting
         UuidInterface $registrationId,
         EmailAddress $primaryAttendee,
         ?EmailAddress $plusOneAttendee
-    ): void 
-    {
+    ): void {
         $registration = new MeetingRegistration($registrationId, $primaryAttendee);
         if (null !== $plusOneAttendee) {
             $registration = $registration->addPlusOne($plusOneAttendee);
@@ -103,6 +102,7 @@ final class Meeting
         if ($this->availableSeats >= $seatsRequired) {
             $this->registrations[(string) $registration->getId()] = $registration;
             $this->availableSeats -= $seatsRequired;
+
             return;
         }
 
@@ -112,9 +112,9 @@ final class Meeting
     public function replacePlusOne(UuidInterface $registrationId, EmailAddress $newPlusOne): void
     {
         $registration = $this->registrations[(string) $registrationId];
-        
+
         $primaryAttendee = $registration->getEmail();
-        
+
 //        $updatedRegistration = $registration->replacePlusOne($newPlusOne);
 //        $this->registrations[(string) $updatedRegistration->getId()] = $updatedRegistration;
         $this->register($registrationId, $primaryAttendee, $newPlusOne);

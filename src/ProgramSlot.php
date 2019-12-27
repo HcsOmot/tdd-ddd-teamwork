@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Procurios\Meeting;
@@ -23,11 +24,11 @@ final class ProgramSlot
         $this->duration = $duration;
     }
 
-    public function rescheduleBy(DateInterval $offset): ProgramSlot
+    public function rescheduleBy(DateInterval $offset): self
     {
         $rescheduledSlotDuration = $this->duration->rescheduleBy($offset);
 
-        return new self($rescheduledSlotDuration,$this->title, $this->room);
+        return new self($rescheduledSlotDuration, $this->title, $this->room);
     }
 
     public function getRoom(): string
@@ -40,7 +41,7 @@ final class ProgramSlot
         return $this->duration;
     }
 
-    public function before(ProgramSlot $that): bool
+    public function before(self $that): bool
     {
         if ($this->duration->before($that->getDuration())) {
             return true;
@@ -49,7 +50,7 @@ final class ProgramSlot
         return false;
     }
 
-    public function after(ProgramSlot $that): bool
+    public function after(self $that): bool
     {
         if ($this->duration->after($that->getDuration())) {
             return true;
@@ -58,7 +59,7 @@ final class ProgramSlot
         return false;
     }
 
-    public function overlapsWith(ProgramSlot $that): bool
+    public function overlapsWith(self $that): bool
     {
         if ($this->room !== $that->getRoom()) {
             return false;
