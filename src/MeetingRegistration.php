@@ -62,16 +62,4 @@ class MeetingRegistration
             $this->attendee
         );
     }
-
-    public function replacePlusOne(EmailAddress $replacement): MeetingRegistration
-    {
-        $updatedRegistration = new self(
-            $this->id,
-            $this->attendee
-        );
-
-        $updatedRegistration->plusOne = $replacement;
-
-        return $updatedRegistration;
-    }
 }
