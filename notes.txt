@@ -37,3 +37,19 @@ TODO: next week
 TRY!! (Yoda wouldn't like this...) to reschedule the meeting
 
 pros & cons of different approaches
+
+
+TODO: Questions:
+    1. where do Meetings come from? How is the system expected to work? Context: Is Meeting as such external to the 
+    Venue? i.e. do we need to support Meeting relocating as well as rescheduling? I'm guessing at some point probably 
+    yes, but does it affect the design right now? Is it too soon to think of it now?
+    2. at this point, we have a lot going on - creating meetings, rescheduling them, booking venues, rescheduling in 
+    respect to the venue, and possibly relocating as well. A good part of this evolved and came to be over time. How 
+    likely are we to come up with this design (or something very similar to it) if we knew all of the currently know 
+    requirements at the project start? If all the exercise documents 1-6 and additional ones were one SRS document, would we have come to 
+    this design? Or would it change the way we think and possibly assign responsibility to some of our objects?
+    3. if this were all in one SRS, and multiple people were tasked to work on this project, how would we organize work?
+     Most likely developers would recognize different objects / concepts involved in this - meeting, scheduling, venue, 
+     etc, divide the tasks among themselves and start working on them individually. That would probably lead to a design
+     that's very different than the one we came up with. 
+    4. Modelling exercise - estudent Project & it's navigation items
