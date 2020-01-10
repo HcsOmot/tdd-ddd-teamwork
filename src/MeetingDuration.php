@@ -38,4 +38,27 @@ class MeetingDuration
     {
         return $this->start->diff($newStart);
     }
+
+    public function overlapsWith(self $that): bool
+    {
+        if ($this === $that) {
+            return true;
+        }
+
+        if ((false === $this->before($that)) && (false === $this->after($that))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function before(self $that): bool
+    {
+        return $this->end <= $that->start;
+    }
+
+    private function after(self $that): bool
+    {
+        return $this->start >= $that->end;
+    }
 }
