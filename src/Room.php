@@ -12,8 +12,8 @@ class Room
     {
         $this->name = $name;
     }
-    public function name()
+
+    public function name(): void
     {
-        
     }
 }

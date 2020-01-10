@@ -28,7 +28,6 @@ final class Program
     {
         $rescheduledPrograms = [];
         foreach ($this->programSlots as $programSlot) {
-            // @var ProgramSlot $programSlot
             $rescheduledPrograms[] = $programSlot->rescheduleBy($offset);
         }
 

@@ -117,9 +117,4 @@ final class Meeting
 
         $this->register($registrationId, $primaryAttendee, $newPlusOne);
     }
-
-    public function getDuration(): MeetingDuration
-    {
-        return $this->duration;
-    }
 }
