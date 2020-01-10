@@ -40,15 +40,10 @@ class Venue
     ): void {
         $meeting = new Meeting($meetingId, $title, $description, $duration, $program, $maxAttendees);
 
-        if (\in_array($duration, $this->reservations, true)) {
-            throw new DomainException();
+        if (false === $this->checkScheduleAvailability($duration)) {
+            throw new DomainException('Venue already booked for this time period');
         }
 
-        foreach ($this->reservations as $reservation) {
-            if ($reservation->overlapsWith($duration)) {
-                throw new DomainException();
-            }
-        }
         $this->reservations[(string) $meetingId] = $duration;
         $this->bookedMeetings[(string) $meetingId] = $meeting;
     }
@@ -58,20 +53,34 @@ class Venue
         $meetingDuration = $this->reservations[(string) $meetingId];
 
         $scheduleOffset = $meetingDuration->calculateOffset($newStart);
-        $targetReschedule = $meetingDuration->rescheduleBy($scheduleOffset);
+        $newSchedule = $meetingDuration->rescheduleBy($scheduleOffset);
 
-        if (\in_array($targetReschedule, $this->reservations, true)) {
-            throw new DomainException();
+        if (false === $this->checkScheduleAvailability($newSchedule)) {
+            throw new DomainException('Venue already booked for this time period');
+        }
+
+        $this->reservations[(string) $meetingId] = $newSchedule;
+        $meeting = $this->bookedMeetings[(string) $meetingId];
+        $meeting->rescheduleFor($newStart);
+    }
+
+    private function checkScheduleAvailability(MeetingDuration $newSchedule): bool
+    {
+        if (\in_array(
+            $newSchedule,
+            $this->reservations,
+            true
+        )
+        ) {
+            return false;
         }
 
         foreach ($this->reservations as $reservation) {
-            if ($reservation->overlapsWith($targetReschedule)) {
-                throw new DomainException();
+            if ($reservation->overlapsWith($newSchedule)) {
+                return false;
             }
         }
 
-        $this->reservations[(string) $meetingId] = $targetReschedule;
-        $meeting = $this->bookedMeetings[(string) $meetingId];
-        $meeting->rescheduleFor($newStart);
+        return true;
     }
 }

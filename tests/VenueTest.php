@@ -104,6 +104,8 @@ class VenueTest extends TestCase
         $newMaxAttendees = 10;
 
         $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Venue already booked for this time period');
+
         $actual->bookForMeeting(
             $newMeetingId,
             $newTitle,
@@ -114,7 +116,7 @@ class VenueTest extends TestCase
         );
     }
 
-    public function testThatMeetingCanBeRescheduledVENUEINTERNAL(): void
+    public function testThatMeetingCanBeRescheduled(): void
     {
         $actual = new Venue(
             Uuid::uuid4(),
@@ -166,8 +168,8 @@ class VenueTest extends TestCase
         $newTitle = new Title('TDD, DDD & Teamwork');
         $newDescription = 'This is a silly workshop, don\'t come';
         $newDuration = new MeetingDuration(
-            new DateTimeImmutable('2020-01-20 19:00'),
-            new DateTimeImmutable('2020-01-20 21:00')
+            new DateTimeImmutable('2020-01-20 20:00'),
+            new DateTimeImmutable('2020-01-20 23:00')
         );
         $newProgram = new Program([
             new ProgramSlot(
@@ -190,6 +192,7 @@ class VenueTest extends TestCase
         $newMaxAttendees = 10;
 
         $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Venue already booked for this time period');
         $actual->bookForMeeting(
             $newMeetingId,
             $newTitle,
