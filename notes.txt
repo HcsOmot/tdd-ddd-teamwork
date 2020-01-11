@@ -53,3 +53,76 @@ TODO: Questions:
      etc, divide the tasks among themselves and start working on them individually. That would probably lead to a design
      that's very different than the one we came up with. 
     4. Modelling exercise - estudent Project & it's navigation items
+
+
+Venue has a different lifecycle than the meeting - different things happen to it than to the Meeting
+
+IRL venue probably wouldn't be the aggregate holding the meetings.
+
+
+
+event sourcing perfrmance issues are a good indicator of too large of an aggregate
+
+
+/////
+aggregate versions vs referencing versions
+
+Aggregate approach:
+- put venue into the meeting
+- put meeting into the venue
+- create a 3rd resource - Booking - joining the venue w/ the meeting
+
+Aggregates: 
+1. Venue:
+Venue -> Meeting
+2. Meeting:
+Meeting -> Venue
+3. Booking:
+Venue <- Booking -> Meeting
+
+
+PROs & CONs:
+1. Venue
+ - holding a list of all the booked meetings allows to more easily perform the check for venue availability for
+  desired date
+ - has potential to grow very large in number of meetings, making it slow to check for availability (3 meetings per 
+ weekend X 52 weekends per year X 10 years = 1560 meetings in 10 years; every meeting has LOADS of it's internal data)
+2. Meeting
+ - it would be very hard to check for availability of a venue, since the venue wouldn't know anything about it's
+  booked terms; we'd need to have some kind of service that would load ALL the meetings and go through them one by
+  one, and check if the desired venue is available for the targeted date
+3. Booking
+  - holds both Venue and Meeting
+  - in order to book a Venue, we'd need to load all the Bookings and search through them and check if the venue is 
+  available
+  - if a Booking holds a list of all reservations for all venues and all their meetings, we'd still have to load 
+  everything and check if the venue is available
+  
+Referencing approach
+Reference Meeting from Venue
+ - same as having Venue as aggregate, only less data is saved/loaded
+Reference Venue from Meeting
+ - same as having Meeting as aggregate, less data is saved/loaded
+Create Booking entity, which holds references to both Venue and Meeting
+ - same as the Booking aggregate version, only less data involved
+ 
+ 
+Possible solutions:
+- Venue holds a list of Meeting IDs and currently booked date range
+- Booking holds references to Venue and Meeting, with booking range
+
+next week
+at least 2 services & in-memory repositories, tests would be nice
+
+need to:
+- book a venue
+- reschedule a meeting (same rule as before - no conflicting w/ other meeting inside the same venue)
+
+
+services are cross-concern software
+
+QUESTION:
+
+// TODO: Are commands & handlers application or domain services? They're dealing with venue booking (and soon with
+    rescheduling) and these are domain concepts. Just because we're not implementing this behaviour in the aggregates
+    and entities doesn't meant that it's not related to the domain.

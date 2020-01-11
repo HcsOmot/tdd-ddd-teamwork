@@ -22,6 +22,11 @@ class Venue
     /** @var Meeting[] */
     private $bookedMeetings;
 
+    /** @var DateTimeImmutable */
+    private $bookedFrom;
+    /** @var DateTimeImmutable */
+    private $bookedUntil;
+
     public function __construct(UuidInterface $id, string $name)
     {
         $this->id = $id;
@@ -62,6 +67,31 @@ class Venue
         $this->reservations[(string) $meetingId] = $newSchedule;
         $meeting = $this->bookedMeetings[(string) $meetingId];
         $meeting->rescheduleFor($newStart);
+    }
+
+    public function availableBetween(DateTimeImmutable $reservationFrom, DateTimeImmutable $reservationUntil): bool
+    {
+        if (null === $this->bookedFrom && null === $this->bookedUntil) {
+            return true;
+        }
+
+        if ($this->bookedFrom <= $reservationFrom || $this->bookedFrom <= $reservationUntil) {
+            return false;
+        }
+
+        if ($this->bookedUntil >= $reservationFrom || $this->bookedUntil >= $reservationUntil) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function bookFor(DateTimeImmutable $reservationStart, DateTimeImmutable $reservationEnd): void
+    {
+        if ($this->availableBetween($reservationStart, $reservationEnd)) {
+            $this->bookedFrom = $reservationStart;
+            $this->bookedUntil = $reservationEnd;
+        }
     }
 
     private function checkScheduleAvailability(MeetingDuration $newSchedule): bool
