@@ -8,38 +8,34 @@ use Ramsey\Uuid\UuidInterface;
 
 class Booking
 {
-    /**
-     * @var UuidInterface
-     */
+    /** @var UuidInterface */
     private $bookingId;
-    /**
-     * @var string
-     */
-    private $getMeetingId;
-    /**
-     * @var string
-     */
-    private $getVenueId;
 
-    public function __construct(UuidInterface $bookingId, string $getMeetingId, string $getVenueId)
+    /** @var UuidInterface */
+    private $meetingId;
+
+    /** @var UuidInterface */
+    private $venueId;
+
+    public function __construct(UuidInterface $bookingId, UuidInterface $meetingId, UuidInterface $venueId)
     {
         $this->bookingId = $bookingId;
-        $this->getMeetingId = $getMeetingId;
-        $this->getVenueId = $getVenueId;
+        $this->meetingId = $meetingId;
+        $this->venueId = $venueId;
     }
 
-    public function getBookingId(): UuidInterface
+    public function getId(): UuidInterface
     {
         return $this->bookingId;
     }
 
-    public function getGetMeetingId(): string
+    public function getMeetingId(): UuidInterface
     {
-        return $this->getMeetingId;
+        return $this->meetingId;
     }
 
-    public function getGetVenueId(): string
+    public function getVenueId(): UuidInterface
     {
-        return $this->getVenueId;
+        return $this->venueId;
     }
 }

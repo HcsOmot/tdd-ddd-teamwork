@@ -35,6 +35,11 @@ class Venue
         $this->bookedMeetings = [];
     }
 
+    public function getId(): UuidInterface
+    {
+        return $this->id;
+    }
+
     public function bookForMeeting(
         UuidInterface $meetingId,
         Title $title,

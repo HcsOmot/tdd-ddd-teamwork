@@ -39,7 +39,7 @@ TRY!! (Yoda wouldn't like this...) to reschedule the meeting
 pros & cons of different approaches
 
 
-TODO: Questions:
+QUESTION:
     1. where do Meetings come from? How is the system expected to work? Context: Is Meeting as such external to the 
     Venue? i.e. do we need to support Meeting relocating as well as rescheduling? I'm guessing at some point probably 
     yes, but does it affect the design right now? Is it too soon to think of it now?
@@ -59,9 +59,8 @@ Venue has a different lifecycle than the meeting - different things happen to it
 
 IRL venue probably wouldn't be the aggregate holding the meetings.
 
-
-
-event sourcing perfrmance issues are a good indicator of too large of an aggregate
+event sourcing performance issues are a good indicator of too large of an aggregate, holding too many events. 
+Re-instantiating the aggregate takes time and resources if the history is too big
 
 
 /////
@@ -121,8 +120,23 @@ need to:
 
 services are cross-concern software
 
-QUESTION:
+QUESTIONS & COMMENTS:
 
-// TODO: Are commands & handlers application or domain services? They're dealing with venue booking (and soon with
-    rescheduling) and these are domain concepts. Just because we're not implementing this behaviour in the aggregates
-    and entities doesn't meant that it's not related to the domain.
+QUESTION: 
+ Are commands & handlers application or domain services? They're dealing with venue booking (and soon with
+ rescheduling) and these are domain concepts. Just because we're not implementing this behaviour in the aggregates 
+ and entities doesn't meant that it's not related to the domain.
+
+TODO: it's becoming a bit crowded in here. We should start organizing the code into
+ sub-directories and introduce some kind of structure
+
+QUESTION: RESOLVED
+ command validation - BookVenueCommand takes 2 arguments that represent time points. If commands should be
+ constructed from primitives only, how, where, and when should we make sure the command data is correct?
+ ANSWER: NO; because commands can be processed in async by an outside system. That's why all elements need to be 
+ primitives. An outside system (non-php) that's processing commands might not have the same support for date time 
+ string format as php does. By validating that the command attributes conform to some structure that only relevant 
+ to php itself could prevent a command from being instantiated, regardless of the other system's ability to process 
+ such data. Command handlers should validate command data, but not commands themselves.
+
+TODO: had to add a getter to some entities to expose ID values that are used in those entities' repositories

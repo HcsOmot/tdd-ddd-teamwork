@@ -117,4 +117,9 @@ final class Meeting
 
         $this->register($registrationId, $primaryAttendee, $newPlusOne);
     }
+
+    public function getId(): UuidInterface
+    {
+        return $this->meetingId;
+    }
 }
