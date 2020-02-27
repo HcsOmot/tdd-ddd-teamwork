@@ -6,6 +6,14 @@ namespace Procurios\Meeting;
 
 class CreateMeetingCommandHandler
 {
+    /** @var MeetingRepository */
+    private $meetingRepository;
+
+    public function __construct(MeetingRepository $meetingRepository)
+    {
+        $this->meetingRepository = $meetingRepository;
+    }
+
     public function __invoke(CreateMeetingCommand $command): void
     {
         $meeting = new Meeting(
@@ -14,7 +22,9 @@ class CreateMeetingCommandHandler
             $command->getDescription(),
             $command->getDuration(),
             $command->getProgram(),
-            $command->getMaxAttendees()
+            $command->getMaxAttendees(),
         );
+
+        $this->meetingRepository->save($meeting);
     }
 }

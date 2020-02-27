@@ -25,4 +25,17 @@ class InMemoryMeetingRepository implements MeetingRepository
     {
         $this->meetings[(string) $meeting->getId()] = $meeting;
     }
+
+    public function findBySpec(MeetingSpecification $spec): array
+    {
+        $listOfMeetings = [];
+
+        foreach ($this->meetings as $meeting) {
+            if ($spec->isSatisfiedBy($meeting)) {
+                $listOfMeetings[] = $meeting;
+            }
+        }
+
+        return $listOfMeetings;
+    }
 }

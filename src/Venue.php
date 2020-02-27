@@ -40,6 +40,7 @@ class Venue
         return $this->id;
     }
 
+    //old
     public function bookForMeeting(
         UuidInterface $meetingId,
         Title $title,
@@ -58,6 +59,7 @@ class Venue
         $this->bookedMeetings[(string) $meetingId] = $meeting;
     }
 
+    //old
     public function moveMeetingBooking(UuidInterface $meetingId, DateTimeImmutable $newStart): void
     {
         $meetingDuration = $this->reservations[(string) $meetingId];
@@ -74,12 +76,9 @@ class Venue
         $meeting->rescheduleFor($newStart);
     }
 
+    //old
     public function availableBetween(DateTimeImmutable $reservationFrom, DateTimeImmutable $reservationUntil): bool
     {
-        if (null === $this->bookedFrom && null === $this->bookedUntil) {
-            return true;
-        }
-
         if ($this->bookedFrom <= $reservationFrom || $this->bookedFrom <= $reservationUntil) {
             return false;
         }
@@ -91,6 +90,7 @@ class Venue
         return true;
     }
 
+    //old
     public function bookFor(DateTimeImmutable $reservationStart, DateTimeImmutable $reservationEnd): void
     {
         if ($this->availableBetween($reservationStart, $reservationEnd)) {
@@ -99,6 +99,22 @@ class Venue
         }
     }
 
+    //new
+    //it will become too big
+    public function pleaseHoldMyMeeting(Meeting $meeting): void
+    {
+//        old getter - alternative is to pass the meeting id here along with the meeting itself - see the calling
+        // code for example
+
+        foreach ($this->bookedMeetings as $bookedMeeting) {
+            if ($meeting->overlapsWith($bookedMeeting)) {
+                throw new MeetingOverlapException();
+            }
+        }
+        $this->bookedMeetings[(string) $meeting->getId()] = $meeting;
+    }
+
+    //old
     private function checkScheduleAvailability(MeetingDuration $newSchedule): bool
     {
         if (\in_array(

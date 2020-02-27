@@ -122,4 +122,14 @@ final class Meeting
     {
         return $this->meetingId;
     }
+
+    public function overlapsWith(self $otherMeeting): bool
+    {
+        return $this->duration->overlapsWith($otherMeeting->duration);
+    }
+
+    public function getDuration(): MeetingDuration
+    {
+        return $this->duration;
+    }
 }
