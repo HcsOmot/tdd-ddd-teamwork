@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Infrastructure\MeetingRepository;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityManager;
-use PDO;
-use PHPUnit\Framework\TestCase;
 use App\Application\CreateMeetingCommand;
 use App\Application\CreateMeetingCommandHandler;
 use App\Domain\Meeting;
@@ -18,8 +16,9 @@ use App\Domain\ProgramSlotDuration;
 use App\Domain\Title;
 use App\Infrastructure\DbMeetingRepository;
 use Ramsey\Uuid\Uuid;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class DbMeetingRepositoryTest extends TestCase
+class DbMeetingRepositoryTest extends KernelTestCase
 {
 
     private $createMeetingCommandHandler;
@@ -29,11 +28,11 @@ class DbMeetingRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $entityManager = static::$container->get(EntityManagerInterface::class);
+        static::bootKernel();
+        /** @var MeetingRepository $meetingRepository */
+        $meetingRepository = static::$container->get(MeetingRepository::class);
+        $this->meetingRepository = $meetingRepository;
 
-        $repo = $entityManager->getRepository(Meeting::class);
-
-        $this->meetingRepository = $repo;
         $this->createMeetingCommandHandler = new CreateMeetingCommandHandler($this->meetingRepository);
     }
 
