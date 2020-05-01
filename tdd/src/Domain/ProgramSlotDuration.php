@@ -6,13 +6,21 @@ namespace App\Domain;
 
 use DateInterval;
 use DateTimeImmutable;
+use Doctrine\ORM\Mapping as ORM;
 
+/** @ORM\Embeddable */
 class ProgramSlotDuration
 {
-    /** @var DateTimeImmutable */
+    /**
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", name="start", nullable=false)
+     */
     private $start;
 
-    /** @var DateTimeImmutable */
+    /**
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable", name="end", nullable=false)
+     */
     private $end;
 
     public function __construct(DateTimeImmutable $start, DateTimeImmutable $end)

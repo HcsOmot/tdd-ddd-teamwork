@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace App\Domain;
 
 use DateInterval;
+use Doctrine\ORM\Mapping as ORM;
 use DomainException;
 use Webmozart\Assert\Assert;
-
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="programs")
+ */
 final class Program
 {
     /** @var ProgramSlot[] */

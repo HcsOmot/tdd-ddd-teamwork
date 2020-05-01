@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure;
 
 use DateTimeImmutable;
-use PDO;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use App\Application\MeetingSpecification;
 use App\Domain\Meeting;
 use App\Domain\MeetingDuration;
@@ -15,16 +16,11 @@ use App\Domain\ProgramSlotDuration;
 use App\Domain\Title;
 use Ramsey\Uuid\UuidInterface;
 
-class DbMeetingRepository implements MeetingRepository
+class DbMeetingRepository extends ServiceEntityRepository implements MeetingRepository
 {
-    private $dbConnection;
-
-    /**
-     * DbMeetingRepository constructor.
-     */
-    public function __construct(PDO $dbConnection)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->dbConnection = $dbConnection;
+        parent::__construct($registry, Meeting::class);
     }
 
     public function getMeeting(UuidInterface $meetingId): Meeting

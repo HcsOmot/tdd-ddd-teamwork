@@ -38,9 +38,8 @@ class DbMeetingRepositoryTest extends KernelTestCase
 
     public function testItCanRetrieveASavedMeeting()
     {
-        $this->markTestSkipped('not doing this atm, moving to sf&doctrine');
-//        1. create a new meeting 
-//        2. save it trhough CH
+//        1. create a new meeting
+//        2. save it through CH
 //        3. retrieve it through the repo
 
         $meetingId1 = Uuid::uuid4();

@@ -24,11 +24,24 @@ class DoctrineMeetingRepository  extends ServiceEntityRepository implements Meet
 
     public function getMeeting(UuidInterface $meetingId): Meeting
     {
-        // TODO: Implement getMeeting() method.
+        /** @var Meeting $meetingId */
+        $meeting = $this->find($meetingId);
+        return $meeting;
     }
 
     public function findBySpec(MeetingSpecification $spec): array
     {
-        // TODO: Implement findBySpec() method.
+//        THIS IS A NAIVE IMPLEMENTATION - TOMO KILLER (ZOKA WOULD KILL US)
+//        what about pagination? that's not a domain concern, is it?
+        $meetings = $this->findAll();
+        $listOfMeetings = [];
+
+        foreach ($meetings as $meeting) {
+            if ($spec->isSatisfiedBy($meeting)) {
+                $listOfMeetings[] = $meeting;
+            }
+        }
+
+        return $listOfMeetings;
     }
 }

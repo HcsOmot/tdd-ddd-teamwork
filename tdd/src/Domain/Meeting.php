@@ -21,25 +21,35 @@ final class Meeting
      */
     private $meetingId;
 
-    /** @var Title */
+    /**
+     * @var Title
+     * @ORM\Column(type="string", nullable=false, length=50)
+     */
     private $title;
 
     /** @ORM\Column(type="string", nullable=false, length=50) */
     private $description;
 
-    /** @var MeetingDuration */
+    /**
+     * @var MeetingDuration
+     * @ORM\Embedded(class="App\Domain\MeetingDuration", columnPrefix=false)
+     */
     private $duration;
 
-    /** @var Program */
+    /** @var Program
+     * @ORM\OneToOne(targetEntity="App\Domain\Program",cascade={"PERSIST"})
+     */
     private $program;
 
     /**
      * @var int
+     * @ORM\Column(type="integer", nullable=false, length=50)
      */
     private $availableSeats;
 
     /**
      * @var MeetingRegistration[]
+     * @ORM\OneToMany(targetEntity="App\Domain\MeetingRegistration", mappedBy="id")
      */
     private $registrations = [];
 

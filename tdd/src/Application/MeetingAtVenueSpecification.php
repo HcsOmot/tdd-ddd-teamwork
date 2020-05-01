@@ -29,3 +29,5 @@ class MeetingAtVenueSpecification implements MeetingSpecification
         return $this->repository->has($newMeetingAtAVenue);
     }
 }
+
+// specs tackle cross concern operations

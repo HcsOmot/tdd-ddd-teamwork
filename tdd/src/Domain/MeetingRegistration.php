@@ -4,18 +4,32 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
+use Doctrine\ORM\Mapping as ORM;
 use DomainException;
 use Ramsey\Uuid\UuidInterface;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="registrations")
+ */
 class MeetingRegistration
 {
-    /** @var UuidInterface */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     */
     private $id;
 
-    /** @var EmailAddress */
+    /**
+     * @var EmailAddress
+     * @ORM\Embedded(class="App\Domain\EmailAddress", columnPrefix=false)
+     */
     private $attendee;
 
-    /** @var EmailAddress */
+    /**
+     * @var EmailAddress
+     * @ORM\Embedded(class="App\Domain\EmailAddress", columnPrefix=false)
+     */
     private $plusOne;
 
     public function __construct(UuidInterface $id, EmailAddress $attendee)

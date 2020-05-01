@@ -5,16 +5,30 @@ declare(strict_types=1);
 namespace App\Domain;
 
 use DateInterval;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="program_slots")
+ */
 final class ProgramSlot
 {
-    /** @var string */
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=false, length=50)
+     */
     private $title;
 
-    /** @var string */
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=false, length=50)
+     */
     private $room;
 
-    /** @var ProgramSlotDuration */
+    /**
+     * @var ProgramSlotDuration
+     * @ORM\Embedded(class="App\Domain\ProgramSlotDuration", columnPrefix=false)
+     */
     private $duration;
 
     public function __construct(ProgramSlotDuration $duration, string $title, string $room)
