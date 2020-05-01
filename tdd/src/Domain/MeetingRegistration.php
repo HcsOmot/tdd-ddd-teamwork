@@ -22,13 +22,13 @@ class MeetingRegistration
 
     /**
      * @var EmailAddress
-     * @ORM\Embedded(class="App\Domain\EmailAddress", columnPrefix=false)
+     * @ORM\Embedded(class="App\Domain\EmailAddress", columnPrefix="attendee_")
      */
     private $attendee;
 
     /**
      * @var EmailAddress
-     * @ORM\Embedded(class="App\Domain\EmailAddress", columnPrefix=false)
+     * @ORM\Embedded(class="App\Domain\EmailAddress", columnPrefix="plus_one_")
      */
     private $plusOne;
 

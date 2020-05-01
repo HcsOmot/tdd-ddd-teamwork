@@ -36,8 +36,9 @@ final class MeetingTest extends TestCase
                     new DateTimeImmutable('2020-01-01 19:00'),
                     new DateTimeImmutable('2020-01-01 21:00')
                 ),
-                new Program([
+                [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-01-01 19:00'),
                             new DateTimeImmutable('2020-01-01 20:00')
@@ -46,6 +47,7 @@ final class MeetingTest extends TestCase
                         'Main room'
                     ),
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-01-01 20:00'),
                             new DateTimeImmutable('2020-01-01 21:00')
@@ -53,16 +55,10 @@ final class MeetingTest extends TestCase
                         'Convergence',
                         'Main room'
                     ),
-                ]),
+                ],
                 10
             )
         );
-    }
-
-    public function testThatProgramOnlyAcceptsProgramSlots(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new Program([new DateTimeImmutable('2020-01-01 19:00')]);
     }
 
     public function testThatMeetingCannotEndBeforeItStarted(): void
@@ -78,9 +74,10 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 21:00'),
                 new DateTimeImmutable('2020-01-01 19:00')
             ),
-            new Program(
+            
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-01-01 19:00'),
                             new DateTimeImmutable('2020-01-01 20:00')
@@ -89,6 +86,7 @@ final class MeetingTest extends TestCase
                         'Main room'
                     ),
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-01-01 20:00'),
                             new DateTimeImmutable('2020-01-01 21:00')
@@ -97,7 +95,7 @@ final class MeetingTest extends TestCase
                         'Main room'
                     ),
                 ]
-            ),
+            ,
             10
         );
     }
@@ -115,7 +113,7 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([]),
+            [],
             10
         );
     }
@@ -124,6 +122,7 @@ final class MeetingTest extends TestCase
     {
         $meetingId = Uuid::uuid4();
 
+        $programSlotId = Uuid::uuid4();
         $actual = new Meeting(
             $meetingId,
             new Title('TDD, DDD & Teamwork'),
@@ -132,9 +131,10 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program(
+            
                 [
                     new ProgramSlot(
+                        $programSlotId,
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-01-01 19:00'),
                             new DateTimeImmutable('2020-01-01 20:00')
@@ -143,7 +143,7 @@ final class MeetingTest extends TestCase
                         'Main room'
                     ),
                 ]
-            ),
+            ,
             10
         );
 
@@ -155,9 +155,10 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-02 12:00'),
                 new DateTimeImmutable('2020-01-02 14:00')
             ),
-            new Program(
+            
                 [
                     new ProgramSlot(
+                        $programSlotId,
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-01-02 12:00'),
                             new DateTimeImmutable('2020-01-02 13:00')
@@ -166,7 +167,7 @@ final class MeetingTest extends TestCase
                         'Main room'
                     ),
                 ]
-            ),
+            ,
             10
         );
 
@@ -179,6 +180,9 @@ final class MeetingTest extends TestCase
     {
         $meetingId = Uuid::uuid4();
 
+        $programSlotId1 = Uuid::uuid4();
+        $programSlotId2 = Uuid::uuid4();
+
         $actual = new Meeting(
             $meetingId,
             new Title('TDD, DDD & Teamwork'),
@@ -187,8 +191,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    $programSlotId1,
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -197,6 +202,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    $programSlotId2,
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 20:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -204,9 +210,10 @@ final class MeetingTest extends TestCase
                     'Divergence',
                     'Main room'
                 ),
-            ]),
+            ],
             10
         );
+
 
         $expected = new Meeting(
             $meetingId,
@@ -216,8 +223,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-02 12:00'),
                 new DateTimeImmutable('2020-01-02 14:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    $programSlotId1,
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-02 12:00'),
                         new DateTimeImmutable('2020-01-02 13:00')
@@ -226,6 +234,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    $programSlotId2,
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-02 13:00'),
                         new DateTimeImmutable('2020-01-02 14:00')
@@ -233,7 +242,7 @@ final class MeetingTest extends TestCase
                     'Divergence',
                     'Main room'
                 ),
-            ]),
+            ],
             10
         );
 
@@ -254,8 +263,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -264,6 +274,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -271,7 +282,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             10
         );
     }
@@ -288,8 +299,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -298,6 +310,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:30:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -305,7 +318,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             10
         );
     }
@@ -323,8 +336,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -333,6 +347,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 20:30:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -340,7 +355,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             10
         );
 
@@ -367,8 +382,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -377,6 +393,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 20:30:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -384,7 +401,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             2
         );
 
@@ -425,8 +442,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -435,6 +453,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 20:30:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -442,7 +461,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             2
         );
 
@@ -474,8 +493,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -484,6 +504,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 20:30:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -491,7 +512,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             2
         );
 
@@ -521,8 +542,9 @@ final class MeetingTest extends TestCase
                 new DateTimeImmutable('2020-01-01 19:00'),
                 new DateTimeImmutable('2020-01-01 21:00')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 19:00'),
                         new DateTimeImmutable('2020-01-01 20:00')
@@ -531,6 +553,7 @@ final class MeetingTest extends TestCase
                     'Main room'
                 ),
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-01-01 20:30:00'),
                         new DateTimeImmutable('2020-01-01 21:00')
@@ -538,7 +561,7 @@ final class MeetingTest extends TestCase
                     'Convergence',
                     'Main room'
                 ),
-            ]),
+            ],
             2
         );
 

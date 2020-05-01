@@ -7,11 +7,9 @@ namespace App\Domain;
 use DateInterval;
 use Doctrine\ORM\Mapping as ORM;
 use DomainException;
+use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
-/**
- * @ORM\Entity
- * @ORM\Table(name="programs")
- */
+
 final class Program
 {
     /** @var ProgramSlot[] */
@@ -49,5 +47,10 @@ final class Program
                 }
             }
         }
+    }
+
+    public function getProgramSlots()
+    {
+        return $this->programSlots;
     }
 }

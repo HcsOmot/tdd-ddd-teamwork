@@ -6,6 +6,8 @@ namespace App\Domain;
 
 use DateInterval;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity
@@ -13,6 +15,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 final class ProgramSlot
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     */
+    private $id;
+
     /**
      * @var string
      * @ORM\Column(type="string", nullable=false, length=50)
@@ -31,18 +39,19 @@ final class ProgramSlot
      */
     private $duration;
 
-    public function __construct(ProgramSlotDuration $duration, string $title, string $room)
+    public function __construct(UuidInterface $id, ProgramSlotDuration $duration, string $title, string $room)
     {
         $this->title = $title;
         $this->room = $room;
         $this->duration = $duration;
+        $this->id = $id;
     }
 
     public function rescheduleBy(DateInterval $offset): self
     {
         $rescheduledSlotDuration = $this->duration->rescheduleBy($offset);
 
-        return new self($rescheduledSlotDuration, $this->title, $this->room);
+        return new self($this->id, $rescheduledSlotDuration, $this->title, $this->room);
     }
 
     public function getRoom(): string

@@ -79,6 +79,7 @@ class MeetingReschedulingTest extends TestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -102,6 +103,7 @@ class MeetingReschedulingTest extends TestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -146,6 +148,7 @@ class MeetingReschedulingTest extends TestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -169,6 +172,7 @@ class MeetingReschedulingTest extends TestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -226,6 +230,7 @@ class MeetingReschedulingTest extends TestCase
             ),
             new Program([
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-02-10 20:00'),
                         new DateTimeImmutable('2020-02-20 20:20')
@@ -247,6 +252,7 @@ class MeetingReschedulingTest extends TestCase
             ),
             new Program([
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-03-10 20:00'),
                         new DateTimeImmutable('2020-03-20 20:20')

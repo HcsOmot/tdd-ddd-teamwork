@@ -43,6 +43,7 @@ class DbMeetingRepositoryTest extends KernelTestCase
 //        3. retrieve it through the repo
 
         $meetingId1 = Uuid::uuid4();
+        $programSlotId = Uuid::uuid4();
 
         $meeting1 = new CreateMeetingCommand(
             $meetingId1,
@@ -54,6 +55,7 @@ class DbMeetingRepositoryTest extends KernelTestCase
             ),
             new Program([
                 new ProgramSlot(
+                    $programSlotId,
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-02-10 20:00'),
                         new DateTimeImmutable('2020-02-20 20:20')
@@ -67,15 +69,16 @@ class DbMeetingRepositoryTest extends KernelTestCase
 
         ($this->createMeetingCommandHandler)($meeting1);
         
-        $actual = new Meeting($meetingId1,
+        $expected = new Meeting($meetingId1,
             new Title('$title'),
             '$description',
             new MeetingDuration(
                 new DateTimeImmutable('2020-02-10 20:00'),
                 new DateTimeImmutable('2020-02-20 20:20')
             ),
-            new Program([
+            [
                 new ProgramSlot(
+                    $programSlotId,
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-02-10 20:00'),
                         new DateTimeImmutable('2020-02-20 20:20')
@@ -83,11 +86,11 @@ class DbMeetingRepositoryTest extends KernelTestCase
                     '$title',
                     '$room'
                 )
-            ]),
+            ],
             10
         );
         
-        $expected = $this->meetingRepository->getMeeting($meetingId1);
+        $actual = $this->meetingRepository->getMeeting($meetingId1);
         
         $this->assertEquals($expected, $actual);
     }

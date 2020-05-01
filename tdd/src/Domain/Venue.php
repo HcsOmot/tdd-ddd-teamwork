@@ -49,7 +49,7 @@ class Venue
         Program $program,
         int $maxAttendees
     ): void {
-        $meeting = new Meeting($meetingId, $title, $description, $duration, $program, $maxAttendees);
+        $meeting = new Meeting($meetingId, $title, $description, $duration, $program->getProgramSlots(), $maxAttendees);
 
         if (false === $this->checkScheduleAvailability($duration)) {
             throw new DomainException('Venue already booked for this time period');

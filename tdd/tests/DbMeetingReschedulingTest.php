@@ -86,6 +86,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -109,6 +110,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -136,7 +138,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
         $this->putMeetingIntoVenueCommandHandler->handle($command2);
     }
 
-    public function testThatReschedulingAMeetingInABookedVenueWillRaiseException(): void
+    public function testThatItShouldNotBePossibleToRescheduleAMeetingIntoABookedVenue(): void
     {
         $meetingId1 = Uuid::uuid4();
         $meetingId2 = Uuid::uuid4();
@@ -153,6 +155,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -176,6 +179,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
             new Program(
                 [
                     new ProgramSlot(
+                        Uuid::uuid4(),
                         new ProgramSlotDuration(
                             new DateTimeImmutable('2020-02-10 20:20'),
                             new DateTimeImmutable('2020-02-20 20:20')
@@ -233,6 +237,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
             ),
             new Program([
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-02-10 20:00'),
                         new DateTimeImmutable('2020-02-20 20:20')
@@ -254,6 +259,7 @@ class DbMeetingReschedulingTest extends KernelTestCase
             ),
             new Program([
                 new ProgramSlot(
+                    Uuid::uuid4(),
                     new ProgramSlotDuration(
                         new DateTimeImmutable('2020-03-10 20:00'),
                         new DateTimeImmutable('2020-03-20 20:20')

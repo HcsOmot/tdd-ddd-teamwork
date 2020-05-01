@@ -24,8 +24,8 @@ class CreateMeetingCommandHandler
             $command->getTitle(),
             $command->getDescription(),
             $command->getDuration(),
-            $command->getProgram(),
-            $command->getMaxAttendees(),
+            $command->getProgram()->getProgramSlots(),
+            $command->getMaxAttendees()
         );
 
         $this->meetingRepository->save($meeting);

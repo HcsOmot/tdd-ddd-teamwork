@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain;
 
+use DateInterval;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use DomainException;
 use Ramsey\Uuid\UuidInterface;
+use Webmozart\Assert\Assert;
 
 /**
  * @ORM\Entity
@@ -22,8 +25,8 @@ final class Meeting
     private $meetingId;
 
     /**
-     * @var Title
-     * @ORM\Column(type="string", nullable=false, length=50)
+     * @var \App\Domain\Title
+     * @ORM\Embedded(class="App\Domain\Title", columnPrefix=false)
      */
     private $title;
 
@@ -36,10 +39,9 @@ final class Meeting
      */
     private $duration;
 
-    /** @var Program
-     * @ORM\OneToOne(targetEntity="App\Domain\Program",cascade={"PERSIST"})
+    /** @var \App\Domain\ProgramSlot[]
      */
-    private $program;
+    private $programSlots;
 
     /**
      * @var int
@@ -49,7 +51,7 @@ final class Meeting
 
     /**
      * @var MeetingRegistration[]
-     * @ORM\OneToMany(targetEntity="App\Domain\MeetingRegistration", mappedBy="id")
+     * @ORM\OneToMany(targetEntity="App\Domain\MeetingRegistration", mappedBy="id", cascade={"PERSIST"})
      */
     private $registrations = [];
 
@@ -58,22 +60,36 @@ final class Meeting
         Title $title,
         string $description,
         MeetingDuration $duration,
-        Program $program,
+        array $programSlots,
         int $maxAttendeeCount
     ) {
         $this->meetingId = $meetingId;
         $this->title = $title;
         $this->description = $description;
         $this->duration = $duration;
-        $this->program = $program;
+        Assert::allIsInstanceOf($programSlots, ProgramSlot::class);
+        Assert::minCount($programSlots, 1, 'Meeting must have at least one Programme Slot');
+        $this->preventProgramSlotOverlap($programSlots);
+        $this->programSlots = $programSlots;
         $this->availableSeats = $maxAttendeeCount;
+        $this->registrations = new ArrayCollection();
     }
 
     public function rescheduleFor(DateTimeImmutable $newStart): void
     {
         $startOffset = $this->duration->calculateOffset($newStart);
         $this->duration = $this->duration->rescheduleBy($startOffset);
-        $this->program = $this->program->rescheduleFor($startOffset);
+        $this->programSlots = $this->rescheduleProgramSlots($startOffset);
+    }
+
+    private function rescheduleProgramSlots(DateInterval $offset): array
+    {
+        $rescheduledPrograms = [];
+        foreach ($this->programSlots as $programSlot) {
+            $rescheduledPrograms[] = $programSlot->rescheduleBy($offset);
+        }
+
+        return $rescheduledPrograms;
     }
 
     public function removePlusOne(UuidInterface $registrationId): void
@@ -149,5 +165,18 @@ final class Meeting
     public function getDuration(): MeetingDuration
     {
         return $this->duration;
+    }
+
+    private function preventProgramSlotOverlap(array $programSlots)
+    {
+        /** @var ProgramSlot[] $programSlots */
+        foreach ($programSlots as $current) {
+            /** @var ProgramSlot[] $programSlots */
+            foreach ($programSlots as $compared) {
+                if ($current->overlapsWith($compared)) {
+                    throw new DomainException();
+                }
+            }
+        }
     }
 }

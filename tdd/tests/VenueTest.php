@@ -49,6 +49,7 @@ class VenueTest extends TestCase
         );
         $program = new Program([
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 19:00'),
                     new DateTimeImmutable('2020-01-01 20:00')
@@ -57,6 +58,7 @@ class VenueTest extends TestCase
                 'Main room'
             ),
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 20:00'),
                     new DateTimeImmutable('2020-01-01 21:00')
@@ -85,6 +87,7 @@ class VenueTest extends TestCase
         );
         $newProgram = new Program([
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 19:00'),
                     new DateTimeImmutable('2020-01-01 20:00')
@@ -93,6 +96,7 @@ class VenueTest extends TestCase
                 'Main room'
             ),
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 20:00'),
                     new DateTimeImmutable('2020-01-01 21:00')
@@ -132,6 +136,7 @@ class VenueTest extends TestCase
         );
         $program = new Program([
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 19:00'),
                     new DateTimeImmutable('2020-01-01 20:00')
@@ -140,6 +145,7 @@ class VenueTest extends TestCase
                 'Main room'
             ),
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 20:00'),
                     new DateTimeImmutable('2020-01-01 21:00')
@@ -173,6 +179,7 @@ class VenueTest extends TestCase
         );
         $newProgram = new Program([
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 19:00'),
                     new DateTimeImmutable('2020-01-01 20:00')
@@ -181,6 +188,7 @@ class VenueTest extends TestCase
                 'Main room'
             ),
             new ProgramSlot(
+                Uuid::uuid4(),
                 new ProgramSlotDuration(
                     new DateTimeImmutable('2020-01-01 20:00'),
                     new DateTimeImmutable('2020-01-01 21:00')
